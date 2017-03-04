@@ -3,6 +3,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
 
 app = Flask(__name__)
 
+# might need improving...
 def login_user( user, passwd ):
     return user
 
@@ -10,6 +11,7 @@ def login_user( user, passwd ):
 def index():
     return render_template('index.html')
 
+## --------- admin pages -----------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -30,6 +32,7 @@ def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('index'))
+
 
 
 if __name__ == "__main__":
