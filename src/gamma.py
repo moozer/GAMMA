@@ -65,13 +65,13 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('index'))
 
-## --------- points page -----------------
+## --------- points pages -----------------
 @app.route('/points/<studentid>', methods=['GET'])
 def points( studentid ):
     name = get_student_name( studentid )
     points_list = get_points_list_per_user( studentid )
 
-    return render_template('points_student.html', name=name, points_list=points_list)
+    return render_template('points_student.html', studname=name, points_list=points_list)
 
 
 
