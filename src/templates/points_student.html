@@ -1,0 +1,52 @@
+{% extends "base_layout.html" %}
+
+{% block body %}
+
+<h2>Detailed points list for {{ username }}</h2>
+
+<h3>Attendance</h3>
+<table>
+{% for att in points_list.attendance %}
+<tr>
+<td>{{att.date}}</td>
+<td>{{att.session}}</td>
+</tr>
+{% endfor %}
+</table>
+
+<h3>Absence w/o cause</h3>
+<table>
+{% for abs in points_list.absence %}
+<tr>
+<td>{{abs.date}}</td>
+<td>{{abs.session}}</td>
+</tr>
+{% endfor %}
+</table>
+
+<h3>Hand-ins</h3>
+<table>
+{% for hi in points_list.handins %}
+<tr>
+<td>{{hi.date}}</td>
+<td>{{hi.session}}</td>
+</tr>
+{% endfor %}
+</table>
+
+<h3>Hand-ins</h3>
+<table>
+{% for ext in points_list.extra %}
+<tr>
+<td>{{ext.date}}</td>
+<td>{{ext.points}}</td>
+<td>{{ext.reason}}</td>
+</tr>
+{% endfor %}
+</table>
+
+
+
+
+
+{% endblock %}

@@ -10,7 +10,7 @@ This is the index page... <br />
 <ul>
 <li><a href="points">See scoreboard</a></li>
 {% if session.logged_in %}
-<li><a href="points?student={{ session.userid}}">Your points</a></li>
+<li><a href="points/{{session.userid}}">Your points</a></li>
 {% endif %}
 
 <li>list of student to come here</li>
