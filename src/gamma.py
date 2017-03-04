@@ -8,7 +8,7 @@ def login_user( user, passwd ):
     return user
 
 def get_points_per_user( userid ):
-    return {'absence': 1, 'attendance': 10, 'handins': 6, 'extra': 5 }
+    return {'absence': 1, 'attendance': 10, 'handins': 6, 'extra': 5, 'sum': 20 }
 
 def get_points_list_per_user( userid ):
     absence =   [   { "date": "20170302", "session": "ITT1 SD" }]
@@ -39,6 +39,9 @@ def get_points_list_per_user( userid ):
 def get_student_name( userid ):
     return "Mr Happy Student"
 
+def get_student_ids():
+    return [1,2,3,4,5,6,7,8,9]
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -66,13 +69,26 @@ def logout():
     return redirect(url_for('index'))
 
 ## --------- points pages -----------------
-@app.route('/points/<studentid>', methods=['GET'])
-def points( studentid ):
-    name = get_student_name( studentid )
-    points_list = get_points_list_per_user( studentid )
+@app.route('/points')
+@app.route('/points/<studentid>')
+def points( studentid=None ):
+    if not studentid:
+        students = get_student_ids()
+        points_list = []
+        for s in students:
+            points_list.append( { "id": s, "name": get_student_name(s),
+                                "points": get_points_per_user(s) } )
+            print points_list
 
-    return render_template('points_student.html', studname=name, points_list=points_list)
+        return render_template('points_overview.html', points_list=points_list)
 
+
+    else:
+        name = get_student_name( studentid )
+        points_list = get_points_list_per_user( studentid )
+
+
+        return render_template('points_student.html', studname=name, points_list=points_list)
 
 
 
