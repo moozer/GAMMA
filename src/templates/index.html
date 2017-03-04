@@ -1,1 +1,24 @@
 {% extends "base_layout.html" %}
+
+{% block body %}
+
+This is the index page... <br />
+<br />
+<br />
+
+<h2>Points</h2>
+<ul>
+<li><a href="points">See scoreboard</a></li>
+{% if session.logged_in %}
+<li><a href="points?student={{ session.userid}}">Your points</a></li>
+{% endif %}
+
+<li>list of student to come here</li>
+</ul>
+<br />
+<br />
+
+<h2>Learning goals</h2>
+stuff to come here
+
+{% endblock %}

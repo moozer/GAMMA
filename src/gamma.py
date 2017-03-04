@@ -3,8 +3,8 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
 
 app = Flask(__name__)
 
-def check_credentials( user, passwd ):
-    return True
+def login_user( user, passwd ):
+    return user
 
 @app.route('/')
 def index():
@@ -14,9 +14,11 @@ def index():
 def login():
     error = None
     if request.method == 'POST':
-        if not check_credentials( request.form['username'], request.form['password'] ):
+        userid = login_user( request.form['username'], request.form['password'] )
+        if not userid:
             error = 'Permission denied, credentials rejected'
         else:
+            session['userid'] = userid
             session['logged_in'] = True
             flash('You were logged in')
             return redirect(url_for('index'))
