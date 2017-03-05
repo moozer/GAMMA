@@ -36,8 +36,13 @@ class test_datastore_queries_Student(unittest.TestCase):
 
     def testQueryStudent(self):
         for i in range( 0,10 ):
-            u = self.ds.get_student( 'john%04d'%(i, ) )
-            self.assertEqual( u.name, "John %d"%(i,) )
+            u = self.ds.get_student( u'john%04d'%(i, ) )
+            self.assertEqual( u.name, u"John %d"%(i,) )
+
+    def testQueryStudentIds(self):
+        ids = self.ds.get_student_ids()
+        for i in range( 0,10 ):
+            self.assertEqual( ids[i], u'john%04d'%(i, ) )
 
 
 
