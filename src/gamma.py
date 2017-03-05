@@ -4,6 +4,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
 from datastore.datastore import Datastore
 
 app = Flask(__name__)
+ds = Datastore()
 
 # might need improving...
 def login_user( user, passwd ):
@@ -39,9 +40,6 @@ def get_points_list_per_user( userid ):
             "handins": handins, "extra": extra}
 
 
-def get_student_ids():
-    return [1,2,3,4,5,6,7,8,9]
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -73,10 +71,10 @@ def logout():
 @app.route('/points/<studentid>')
 def points( studentid=None ):
     if not studentid:
-        students = get_student_ids()
+        students = ds.get_student_ids()
         points_list = []
         for s in students:
-            points_list.append( { "id": s, "name": get_student(s).name,
+            points_list.append( { "id": s, "name": ds.get_student(s).name,
                                 "points": get_points_per_user(s) } )
             print points_list
 
@@ -99,6 +97,5 @@ def init_db( ds ):
 if __name__ == "__main__":
     app.secret_key = 'super secret key'
 
-    ds = Datastore()
     init_db( ds )
     app.run()
