@@ -1,6 +1,8 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
 
+from datastore.datastore import Datastore
+
 app = Flask(__name__)
 
 # might need improving...
@@ -36,8 +38,6 @@ def get_points_list_per_user( userid ):
     return { 'absence': absence, "attendance": attendance,
             "handins": handins, "extra": extra}
 
-def get_student_name( userid ):
-    return "Mr Happy Student"
 
 def get_student_ids():
     return [1,2,3,4,5,6,7,8,9]
@@ -76,7 +76,7 @@ def points( studentid=None ):
         students = get_student_ids()
         points_list = []
         for s in students:
-            points_list.append( { "id": s, "name": get_student_name(s),
+            points_list.append( { "id": s, "name": get_student(s).name,
                                 "points": get_points_per_user(s) } )
             print points_list
 
@@ -84,7 +84,7 @@ def points( studentid=None ):
 
 
     else:
-        name = get_student_name( studentid )
+        name = ds.get_student(studentid).name
         points_list = get_points_list_per_user( studentid )
 
 
@@ -92,7 +92,13 @@ def points( studentid=None ):
 
 
 
+def init_db( ds ):
+    for i in range( 0,10 ):
+        ds.add_student( student_id = 'john%04d'%(i, ), student_name="John %d"%(i,) )
 
 if __name__ == "__main__":
     app.secret_key = 'super secret key'
+
+    ds = Datastore()
+    init_db( ds )
     app.run()
