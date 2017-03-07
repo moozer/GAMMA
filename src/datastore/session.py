@@ -7,7 +7,7 @@ class Session( Base ):
     __tablename__ = 'sessions'
 
     id = Column(Integer, primary_key=True)
-    data = Column( Date )
+    date = Column( Date )
     name = Column(String)
 
 session_record = collections.namedtuple( 'session_record', ['name', 'date'])

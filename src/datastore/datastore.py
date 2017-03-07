@@ -17,6 +17,7 @@ class Datastore( object ):
         DatastoreSessionMaker = sessionmaker(bind=engine)
         self.session = DatastoreSessionMaker()
 
+    # --- students ----
     def add_student( self, student ):
         u = Student( student_id = student.id,
                      name = student.name)
@@ -32,3 +33,17 @@ class Datastore( object ):
         for stud in self.session.query(Student).order_by(asc(Student.student_id)):
             ids.append( stud.student_id )
         return ids
+
+    # --- sessions ----
+    def get_session( self, id, id_type="Date"):
+        return self.get_session_by_date( id )
+
+    def get_session_by_date( self, session_date ):
+        s = self.session.query(Session).filter(Session.date==session_date).first()
+        return session_record( s.name, s.date )
+
+    def add_session( self, session ):
+        u = Session( date = session.date,
+                     name = session.name)
+        self.session.add( u)
+        self.session.commit()
