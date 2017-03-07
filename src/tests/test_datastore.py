@@ -8,12 +8,30 @@ from datastore.datastore import *
 student_id = "abcd1234"
 student_name = "John Doe"
 
-class test_datastore_basic_Student(unittest.TestCase):
+session_name = "Some session"
+session_date = "20170203"
+
+class test_datastore_basic(unittest.TestCase):
     def testStudentMap(self):
         u = student_record( student_id, student_name)
 
         self.assertEqual( u.id, student_id )
         self.assertEqual( u.name, student_name )
+
+    def testAddStudent( self ):
+        u = student_record( student_id, student_name)
+        ds = Datastore()
+
+        ds.add_student( u )
+        db_u = ds.get_student( student_id )
+
+        self.assertEqual( u, db_u )
+
+    def testSessionMap(self):
+        s = session_record( session_name, session_date )
+
+        self.assertEqual( s.name, session_name )
+        self.assertEqual( s.date, session_date )
 
     def testAddStudent( self ):
         u = student_record( student_id, student_name)

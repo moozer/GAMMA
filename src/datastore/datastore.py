@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 from student import *
+from session import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import desc, asc
 
