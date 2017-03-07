@@ -16,8 +16,9 @@ class Datastore( object ):
         DatastoreSessionMaker = sessionmaker(bind=engine)
         self.session = DatastoreSessionMaker()
 
-    def add_student( self, student_id, student_name ):
-        u = Student( student_id = student_id, name=student_name)
+    def add_student( self, student ):
+        u = Student( student_id = student.id,
+                     name = student.name)
         self.session.add( u)
         self.session.commit()
 

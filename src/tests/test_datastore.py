@@ -15,24 +15,22 @@ class test_datastore_basic_Student(unittest.TestCase):
         self.assertEqual( u.id, student_id )
         self.assertEqual( u.name, student_name )
 
-    # def testAddStudent( self ):
-    #     u = Student( student_id = student_id, name=student_name)
-    #
-    #
-    #     test_session = Session()
-    #     test_session.add( u)
-    #     test_session.commit()
-    #
-    #     rowcount = test_session.query(Student).count()
-    #
-    #     self.assertEqual(rowcount, 1 )
-    #     self.assertTrue( u.id)
+    def testAddStudent( self ):
+        u = student_record( student_id, student_name)
+        ds = Datastore()
+
+        ds.add_student( u )
+        db_u = ds.get_student( student_id )
+
+        self.assertEqual( u, db_u )
+
 
 class test_datastore_queries_Student(unittest.TestCase):
     def setUp( self ):
         self.ds = Datastore()
         for i in range( 0,10 ):
-            self.ds.add_student( student_id = 'john%04d'%(i, ), student_name="John %d"%(i,) )
+            u = student_record( 'john%04d'%(i, ), "John %d"%(i,) )
+            self.ds.add_student( u )
 
     def testQueryStudent(self):
         for i in range( 0,10 ):
