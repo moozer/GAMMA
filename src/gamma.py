@@ -5,7 +5,7 @@ from datastore.datastore import Datastore
 from datastore.student import student_record
 from datastore.session import session_record
 
-from datetime import date
+from datetime import date, datetime
 
 app = Flask(__name__)
 ds = Datastore()
@@ -89,6 +89,8 @@ def points( studentid=None ):
         return render_template('points_student.html', studname=name, points_list=points_list)
 
 ## --------- points pages -----------------
+# TODO: we want this:
+#       https://stackoverflow.com/questions/31669864/date-in-flask-url
 @app.route('/sessions')
 @app.route('/sessions/<session_date>')
 def sessions( session_date=None ):
@@ -96,10 +98,8 @@ def sessions( session_date=None ):
         sessions = ds.get_sessions_list()
         return render_template('sessions_overview.html', sessions = sessions)
     else:
-        name = ds.get_student(studentid).name
-        points_list = get_points_list_per_user( studentid )
-
-        return render_template('points_student.html', studname=name, points_list=points_list)
+        s = ds.get_session( datetime.strptime(session_date, "%Y-%m-%d").date() )
+        return render_template('sessions_detailed.html', session=s )
 
 def init_db( ds ):
     for i in range( 0,10 ):
