@@ -52,3 +52,23 @@ class Datastore( object ):
 
     def get_sessions_list( self ):
         return self.session.query(Session.date, Session.name).order_by(asc(Session.date))
+
+
+    # --- session_points ----
+    def add_session_points( self, session_points ):
+        sp = Session_points( session_id = session_points.session_id,
+                            student_id  = session_points.student_id,
+                            attendance  = session_points.attendance,
+                            absence     = session_points.absence,
+                            handin      = session_points.handin
+                            )
+        self.session.add( sp)
+        self.session.commit()
+
+    def get_session_points_by_session( self, session_id ):
+        sps = self.session.query(Session_points).filter(Session_points.session_id==session_id)
+        ret = []
+        for sp in sps:
+            ret.append( session_points_record( sp.session_id, sp.student_id,
+                        sp.attendance, sp.absence, sp.handin))
+        return ret

@@ -57,6 +57,24 @@ class test_datastore_basic(unittest.TestCase):
         self.assertEqual( s.absence, False )
         self.assertEqual( s.handin, True )
 
+    def testAddSession( self ):
+        ses = session_record( session_name, session_date )
+        stud = student_record( student_id, student_name)
+        sp = session_points_record( session_date, student_id, True, False, True )
+
+        ds = Datastore()
+
+        ds.add_student( stud )
+        ds.add_session( ses )
+        ds.add_session_points( sp )
+
+        db_ses = ds.get_session_points_by_session( session_date )
+        self.assertEqual( sp, db_ses[0] )
+
+#        db_stud = ds.get_session_points_by_stud( student_id )
+#        self.assertEqual( sp, db_stud[0] )
+
+
 class test_datastore_queries_Student(unittest.TestCase):
     def setUp( self ):
         self.ds = Datastore()
