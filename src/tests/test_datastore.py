@@ -11,8 +11,11 @@ from datastore.datastore import *
 student_id = "abcd1234"
 student_name = "John Doe"
 
+test_year = 2017
+test_month = 2
+test_day = 3
 session_name = "Some session"
-session_date = date( 2017, 02, 03 )
+session_date = date( test_year, test_month, test_day )
 
 class test_datastore_basic(unittest.TestCase):
     def testStudentMap(self):
@@ -63,22 +66,22 @@ class test_datastore_queries_Student(unittest.TestCase):
         for i in range( 0,10 ):
             self.assertEqual( ids[i], u'john%04d'%(i, ) )
 
-#class test_datastore_queries_Session(unittest.TestCase):
-#    def setUp( self ):
-#        self.ds = Datastore()
-#        for i in range( 0,10 ):
-#            u = session_record( 'john%04d'%(i, ), date( 2017, 02, i+1 ) )
-#            self.ds.add_session( u )
+class test_datastore_queries_Session(unittest.TestCase):
+    def setUp( self ):
+        self.ds = Datastore()
+        for i in range( 0,10 ):
+            u = session_record( 'LearningSession%04d'%(i, ), date( test_year, test_month, i+1 ) )
+            self.ds.add_session( u )
+
+    def testQuerySession(self):
+        for i in range( 0,10 ):
+            u = self.ds.get_session( date( test_year, test_month, i+1 ) )
+            self.assertEqual( u.name, 'LearningSession%04d'%(i, ), )
 #
-#    def testQueryStudent(self):
-#        for i in range( 0,10 ):
-#            u = self.ds.get_student( u'john%04d'%(i, ) )
-#            self.assertEqual( u.name, u"John %d"%(i,) )
-#
-#    def testQueryStudentIds(self):
-#        ids = self.ds.get_student_ids()
-#        for i in range( 0,10 ):
-#            self.assertEqual( ids[i], u'john%04d'%(i, ) )
+    def testQueryIds(self):
+        sessions = self.ds.get_sessions_list()
+        for i in range( 0,10 ):
+            self.assertEqual( ids[i], u'john%04d'%(i, ) )
 
 
 if __name__ == '__main__':
