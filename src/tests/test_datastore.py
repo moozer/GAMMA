@@ -77,11 +77,11 @@ class test_datastore_queries_Session(unittest.TestCase):
         for i in range( 0,10 ):
             u = self.ds.get_session( date( test_year, test_month, i+1 ) )
             self.assertEqual( u.name, 'LearningSession%04d'%(i, ), )
-#
-    def testQueryIds(self):
+
+    def testQuerySessions(self):
         sessions = self.ds.get_sessions_list()
         for i in range( 0,10 ):
-            self.assertEqual( ids[i], u'john%04d'%(i, ) )
+            self.assertEqual( sessions[i][0], date( test_year, test_month, i+1 ) )
 
 
 if __name__ == '__main__':
