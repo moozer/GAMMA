@@ -71,8 +71,8 @@ class test_datastore_basic(unittest.TestCase):
         db_ses = ds.get_session_points_by_session( session_date )
         self.assertEqual( sp, db_ses[0] )
 
-#        db_stud = ds.get_session_points_by_stud( student_id )
-#        self.assertEqual( sp, db_stud[0] )
+        db_stud = ds.get_session_points_by_stud( student_id )
+        self.assertEqual( sp, db_stud[0] )
 
 
 class test_datastore_queries_Student(unittest.TestCase):

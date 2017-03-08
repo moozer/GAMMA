@@ -11,7 +11,7 @@ from sqlalchemy import desc, asc
 
 class Datastore( object ):
     def __init__( self, filename=":memory:" ):
-        engine = create_engine('sqlite:///%s'%filename, echo=False)
+        engine = create_engine('sqlite:///%s'%filename, echo=True)
 
         # if not initialized...
         Base.metadata.create_all(engine)
@@ -67,6 +67,14 @@ class Datastore( object ):
 
     def get_session_points_by_session( self, session_id ):
         sps = self.session.query(Session_points).filter(Session_points.session_id==session_id)
+        ret = []
+        for sp in sps:
+            ret.append( session_points_record( sp.session_id, sp.student_id,
+                        sp.attendance, sp.absence, sp.handin))
+        return ret
+
+    def get_session_points_by_stud( self, student_id ):
+        sps = self.session.query(Session_points).filter(Session_points.student_id==student_id)
         ret = []
         for sp in sps:
             ret.append( session_points_record( sp.session_id, sp.student_id,
