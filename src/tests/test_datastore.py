@@ -48,6 +48,14 @@ class test_datastore_basic(unittest.TestCase):
 
         self.assertEqual( s, db_s )
 
+    def testSessionPointsMap(self):
+        s = session_points_record( session_date, student_id, True, False, True )
+
+        self.assertEqual( s.student_id, student_id )
+        self.assertEqual( s.session_id, session_date )
+        self.assertEqual( s.attendance, True )
+        self.assertEqual( s.absence, False )
+        self.assertEqual( s.handin, True )
 
 class test_datastore_queries_Student(unittest.TestCase):
     def setUp( self ):
