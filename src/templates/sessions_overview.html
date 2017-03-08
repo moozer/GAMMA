@@ -1,0 +1,16 @@
+{% extends "base_layout.html" %}
+
+{% block body %}
+
+<h2>Overview of sessions</h2>
+<table>
+{% for s in sessions %}
+<tr>
+<td>{{ s.date }}</td>
+<td>{{ s.name }}</td>
+<td><a href="/sessions/{{s.date}}">details</a>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

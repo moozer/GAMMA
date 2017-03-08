@@ -2,6 +2,10 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
 
 from datastore.datastore import Datastore
+from datastore.student import student_record
+from datastore.session import session_record
+
+from datetime import date
 
 app = Flask(__name__)
 ds = Datastore()
@@ -76,23 +80,33 @@ def points( studentid=None ):
         for s in students:
             points_list.append( { "id": s, "name": ds.get_student(s).name,
                                 "points": get_points_per_user(s) } )
-            print points_list
 
         return render_template('points_overview.html', points_list=points_list)
-
-
     else:
         name = ds.get_student(studentid).name
         points_list = get_points_list_per_user( studentid )
 
+        return render_template('points_student.html', studname=name, points_list=points_list)
+
+## --------- points pages -----------------
+@app.route('/sessions')
+@app.route('/sessions/<session_date>')
+def sessions( session_date=None ):
+    if not session_date:
+        sessions = ds.get_sessions_list()
+        return render_template('sessions_overview.html', sessions = sessions)
+    else:
+        name = ds.get_student(studentid).name
+        points_list = get_points_list_per_user( studentid )
 
         return render_template('points_student.html', studname=name, points_list=points_list)
 
-
-
 def init_db( ds ):
     for i in range( 0,10 ):
-        ds.add_student( student_id = 'john%04d'%(i, ), student_name="John %d"%(i,) )
+        ds.add_student( student_record( 'john%04d'%(i, ), "John %d"%(i,) ) )
+
+    for i in range( 0,10 ):
+        ds.add_session( session_record( 'LearningSession%04d'%(i, ), date( 2017, 02, i+1) ) )
 
 if __name__ == "__main__":
     app.secret_key = 'super secret key'

@@ -49,4 +49,4 @@ class Datastore( object ):
         self.session.commit()
 
     def get_sessions_list( self ):
-        return self.session.query(Session.date).order_by(asc(Session.date))
+        return self.session.query(Session.date, Session.name).order_by(asc(Session.date))
