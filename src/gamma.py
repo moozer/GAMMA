@@ -4,6 +4,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
 from datastore.datastore import Datastore
 from datastore.student import student_record
 from datastore.session import session_record
+from datastore.session_points import session_points_record
 
 from datetime import date, datetime
 
@@ -92,21 +93,32 @@ def points( studentid=None ):
 # TODO: we want this:
 #       https://stackoverflow.com/questions/31669864/date-in-flask-url
 @app.route('/sessions')
-@app.route('/sessions/<session_date>')
-def sessions( session_date=None ):
-    if not session_date:
+@app.route('/sessions/<session_date_str>')
+def sessions( session_date_str=None ):
+    if not session_date_str:
         sessions = ds.get_sessions_list()
         return render_template('sessions_overview.html', sessions = sessions)
     else:
-        s = ds.get_session( datetime.strptime(session_date, "%Y-%m-%d").date() )
-        return render_template('sessions_detailed.html', session=s )
+        session_date = datetime.strptime(session_date_str, "%Y-%m-%d").date()
+        s = ds.get_session( session_date )
+        sp = ds.get_session_points_by_session( session_date )
+        return render_template('sessions_detailed.html', session=s, points=sp )
 
 def init_db( ds ):
-    for i in range( 0,10 ):
+    student_count = 10
+    sessions_count = 12
+
+    for i in range( 0,student_count ):
         ds.add_student( student_record( 'john%04d'%(i, ), "John %d"%(i,) ) )
 
-    for i in range( 0,10 ):
+    for i in range( 0,sessions_count ):
         ds.add_session( session_record( 'LearningSession%04d'%(i, ), date( 2017, 02, i+1) ) )
+
+    for user_i in range( 0,student_count ):
+        for session_i in range( 0,sessions_count ):
+            ds.add_session_points(
+                session_points_record( date( 2017, 02, session_i+1), 'john%04d'%(user_i, ),
+                                        True, False, True ) )
 
 if __name__ == "__main__":
     app.secret_key = 'super secret key'

@@ -8,5 +8,21 @@ date: {{ session.date }} <br />
 name: {{ session.name }}<br />
 <br />
 <br />more info about learning goals and points should go here.<br />
+<br />
+<br />
+
+<table>
+{% for sp in points %}
+
+<tr>
+  <td>{{sp.student_id}}</td>
+  <td>{{sp.attendance}}</td>
+  <td>{{sp.absence}}</td>
+  <td>{{sp.handin}}</td>
+
+</tr>
+{% endfor %}
+</table>
+
 
 {% endblock %}

@@ -1,14 +1,17 @@
 from datastore import Base
-from sqlalchemy import Column, Integer, String, Date, Boolean
+from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey
 import collections
+
+from student import Student
+from session import Session
 
 
 class Session_points( Base ):
-    __tablename__ = 'session_pointss'
+    __tablename__ = 'session_points'
 
     id = Column(Integer, primary_key=True)
-    session_id = Column( Date )
-    student_id = Column(String)
+    session_id = Column( Date, ForeignKey("sessions.date") )
+    student_id = Column(String, ForeignKey("students.student_id"))
     attendance = Column( Boolean )
     absence = Column( Boolean )
     handin = Column( Boolean )
