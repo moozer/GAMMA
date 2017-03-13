@@ -111,6 +111,13 @@ input[type='submit'] {
 	cursor: pointer;
 }
 
+/* Lists
+*****************/
+ul li {
+	line-height: 1em;
+	margin: .25em 0;
+}
+
 /*****************
 * 3. LAYOUT
 *****************/
