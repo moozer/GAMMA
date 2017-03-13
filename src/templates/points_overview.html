@@ -1,23 +1,34 @@
 {% extends "base_layout.html" %}
 
-{% block body %}
+	{% block main %}
+	.....some cool graph should be inserted here..... <br>
+	<br>
 
-.....some cool graph should be inserted here..... <br />
-<br />
-
-<h2>Overview of students</h2>
-<table>
-{% for stud in points_list %}
-<tr>
-<td>{{stud.name}}</td>
-<td>{{stud.points.attendance}}</td>
-<td>{{stud.points.absense}}</td>
-<td>{{stud.points.handins}}</td>
-<td>{{stud.points.extra}}</td>
-<td>{{stud.points.sum}}</td>
-<td><a href="/points/{{stud.id}}">details</a>
-</tr>
-{% endfor %}
-</table>
-
-{% endblock %}
+	<h3>Overview of students</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Attendance</th>
+					<th>Absense</th>
+					<th>Handins</th>
+					<th>Extra</th>
+					<th>Points</th>
+					<th>More</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for stud in points_list %}
+				<tr>
+					<td>{{stud.name}}</td>
+					<td>{{stud.points.attendance}}</td>
+					<td>{{stud.points.absense}}</td>
+					<td>{{stud.points.handins}}</td>
+					<td>{{stud.points.extra}}</td>
+					<td>{{stud.points.sum}}</td>
+					<td><a href="/points/{{stud.id}}">details</a></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+	</table>
+	{% endblock %}
