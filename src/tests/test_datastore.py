@@ -85,6 +85,19 @@ class test_datastore_basic(unittest.TestCase):
         self.assertEqual( ep.points, 5 )
         self.assertEqual( ep.reason, some_text )
 
+    def testAddExtraPoints( self ):
+        ds = Datastore()
+
+        stud = student_record( student_id, student_name)
+        ds.add_student( stud )
+
+        ep = extra_points_record( some_date, student_id, points=5, reason=some_text )
+        ds.add_extra_points( ep )
+
+        db_ses = ds.get_extra_points_by_student( student_id )
+        self.assertEqual( ep, db_ses[0] )
+
+
 class test_datastore_queries_Student(unittest.TestCase):
     def setUp( self ):
         self.ds = Datastore()

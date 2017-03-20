@@ -12,7 +12,7 @@ from sqlalchemy import desc, asc
 
 class Datastore( object ):
     def __init__( self, filename=":memory:" ):
-        engine = create_engine('sqlite:///%s'%filename, echo=True)
+        engine = create_engine('sqlite:///%s'%filename, echo=False)
 
         # if not initialized...
         Base.metadata.create_all(engine)
@@ -80,4 +80,24 @@ class Datastore( object ):
         for sp in sps:
             ret.append( session_points_record( sp.session_id, sp.student_id,
                         sp.attendance, sp.absence, sp.handin))
+        return ret
+
+    # --- extra_points ----
+    def add_extra_points( self, extra_points ):
+        sp = Extra_points(   date        = extra_points.date,
+                            student_id  = extra_points.student_id,
+                            points      = extra_points.points,
+                            reason     = extra_points.reason
+                        )
+        self.session.add( sp )
+        self.session.commit()
+
+    def get_extra_points_by_student( self, student_id ):
+        eps = self.session.query(Extra_points).filter(Extra_points.student_id==student_id)
+        ret = []
+        for ep in eps:
+            ret.append( extra_points_record( student_id = ep.student_id,
+                                             date       = ep.date,
+                                             points     = ep.points,
+                                             reason     = ep.reason))
         return ret
