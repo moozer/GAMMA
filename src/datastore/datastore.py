@@ -5,6 +5,7 @@ Base = declarative_base()
 from student import *
 from session import *
 from session_points import *
+from extra_points import *
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import desc, asc

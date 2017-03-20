@@ -14,8 +14,10 @@ student_name = "John Doe"
 test_year = 2017
 test_month = 2
 test_day = 3
+some_date = date( test_year, test_month, test_day )
+some_text = "awesome!"
 session_name = "Some session"
-session_date = date( test_year, test_month, test_day )
+session_date = some_date
 
 class test_datastore_basic(unittest.TestCase):
     def testStudentMap(self):
@@ -74,6 +76,14 @@ class test_datastore_basic(unittest.TestCase):
         db_stud = ds.get_session_points_by_stud( student_id )
         self.assertEqual( sp, db_stud[0] )
 
+
+    def testExtraPointsMap(self):
+        ep = extra_points_record( some_date, student_id, points=5, reason=some_text )
+
+        self.assertEqual( ep.student_id, student_id )
+        self.assertEqual( ep.date, some_date )
+        self.assertEqual( ep.points, 5 )
+        self.assertEqual( ep.reason, some_text )
 
 class test_datastore_queries_Student(unittest.TestCase):
     def setUp( self ):
