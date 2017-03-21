@@ -1,2 +1,4 @@
 *.pyc
 venv
+src/nosetests.json
+
