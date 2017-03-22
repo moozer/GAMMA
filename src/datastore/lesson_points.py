@@ -3,19 +3,19 @@ from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey
 import collections
 
 from student import Student
-from session import Session
+from lesson import Lesson
 
 
-class Session_points(Base):
-    __tablename__ = 'session_points'
+class Lesson_points(Base):
+    __tablename__ = 'lesson_points'
 
     id = Column(Integer, primary_key=True)
-    session_id = Column(Date, ForeignKey("sessions.date"))
+    lesson_id = Column(Date, ForeignKey("lessons.date"))
     student_id = Column(String, ForeignKey("students.student_id"))
     attendance = Column(Boolean)
     absence = Column(Boolean)
     handin = Column(Boolean)
 
-session_points_record = collections.namedtuple(
-        'session_points_record',
-        ['session_id', 'student_id', 'attendance', 'absence', 'handin'])
+lesson_points_record = collections.namedtuple(
+        'lesson_points_record',
+        ['lesson_id', 'student_id', 'attendance', 'absence', 'handin'])

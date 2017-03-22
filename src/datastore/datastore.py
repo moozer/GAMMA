@@ -1,15 +1,17 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
+
+Base = declarative_base()
+
 from student import *
-from session import *
-from session_points import *
+from lesson import *
+from lesson_points import *
 from extra_points import *
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import desc, asc
 
-Base = declarative_base()
 
 
 class Datastore(object):
@@ -43,56 +45,56 @@ class Datastore(object):
             ids.append(stud.student_id)
         return ids
 
-    # --- sessions ----
-    def get_session(self, id, id_type="Date"):
-        return self.get_session_by_date(id)
+    # --- lessons ----
+    def get_lesson(self, id, id_type="Date"):
+        return self.get_lesson_by_date(id)
 
-    def get_session_by_date(self, session_date):
-        s = self.session.query(Session).filter(
-                    Session.date == session_date
+    def get_lesson_by_date(self, lesson_date):
+        s = self.session.query(Lesson).filter(
+                    Lesson.date == lesson_date
                     ).first()
-        return session_record(s.name, s.date)
+        return lesson_record(s.name, s.date)
 
-    def add_session(self, session):
-        u = Session(date=session.date,
-                    name=session.name)
+    def add_lesson(self, lesson):
+        u = Lesson(date=lesson.date,
+                    name=lesson.name)
         self.session.add(u)
         self.session.commit()
 
-    def get_sessions_list(self):
+    def get_lessons_list(self):
         return self.session.query(
-                        Session.date,
-                        Session.name
-                        ).order_by(asc(Session.date))
+                        Lesson.date,
+                        Lesson.name
+                        ).order_by(asc(Lesson.date))
 
-    # --- session_points ----
-    def add_session_points(self, session_points):
-        sp = Session_points(session_id=session_points.session_id,
-                            student_id=session_points.student_id,
-                            attendance=session_points.attendance,
-                            absence=session_points.absence,
-                            handin=session_points.handin
+    # --- lesson_points ----
+    def add_lesson_points(self, lesson_points):
+        sp = Lesson_points(lesson_id=lesson_points.lesson_id,
+                            student_id=lesson_points.student_id,
+                            attendance=lesson_points.attendance,
+                            absence=lesson_points.absence,
+                            handin=lesson_points.handin
                             )
         self.session.add(sp)
         self.session.commit()
 
-    def get_session_points_by_session(self, session_id):
-        sps = self.session.query(Session_points).filter(
-                        Session_points.session_id == session_id)
+    def get_lesson_points_by_lesson(self, lesson_id):
+        sps = self.session.query(Lesson_points).filter(
+                        Lesson_points.lesson_id == lesson_id)
         ret = []
         for sp in sps:
-            ret.append(session_points_record(
-                        sp.session_id, sp.student_id,
+            ret.append(lesson_points_record(
+                        sp.lesson_id, sp.student_id,
                         sp.attendance, sp.absence, sp.handin))
         return ret
 
-    def get_session_points_by_stud(self, student_id):
-        sps = self.session.query(Session_points).filter(
-                        Session_points.student_id == student_id)
+    def get_lesson_points_by_stud(self, student_id):
+        sps = self.session.query(Lesson_points).filter(
+                        Lesson_points.student_id == student_id)
         ret = []
         for sp in sps:
-            ret.append(session_points_record(
-                         sp.session_id, sp.student_id,
+            ret.append(lesson_points_record(
+                         sp.lesson_id, sp.student_id,
                          sp.attendance, sp.absence, sp.handin))
         return ret
 

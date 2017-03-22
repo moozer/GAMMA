@@ -16,8 +16,8 @@ test_month = 2
 test_day = 3
 some_date = date( test_year, test_month, test_day )
 some_text = "awesome!"
-session_name = "Some session"
-session_date = some_date
+lesson_name = "Some lesson"
+lesson_date = some_date
 
 class test_datastore_basic(unittest.TestCase):
     def testStudentMap(self):
@@ -35,45 +35,45 @@ class test_datastore_basic(unittest.TestCase):
 
         self.assertEqual( u, db_u )
 
-    def testSessionMap(self):
-        s = session_record( session_name, session_date )
+    def testLessonMap(self):
+        s = lesson_record( lesson_name, lesson_date )
 
-        self.assertEqual( s.name, session_name )
-        self.assertEqual( s.date, session_date )
+        self.assertEqual( s.name, lesson_name )
+        self.assertEqual( s.date, lesson_date )
 
-    def testAddSession( self ):
-        s = session_record( session_name, session_date )
+    def testAddLesson( self ):
+        s = lesson_record( lesson_name, lesson_date )
         ds = Datastore()
 
-        ds.add_session(s)
-        db_s = ds.get_session( session_date )
+        ds.add_lesson(s)
+        db_s = ds.get_lesson( lesson_date )
 
         self.assertEqual( s, db_s )
 
-    def testSessionPointsMap(self):
-        s = session_points_record( session_date, student_id, True, False, True )
+    def testLessonPointsMap(self):
+        s = lesson_points_record( lesson_date, student_id, True, False, True )
 
         self.assertEqual( s.student_id, student_id )
-        self.assertEqual( s.session_id, session_date )
+        self.assertEqual( s.lesson_id, lesson_date )
         self.assertEqual( s.attendance, True )
         self.assertEqual( s.absence, False )
         self.assertEqual( s.handin, True )
 
-    def testAddSession( self ):
-        ses = session_record( session_name, session_date )
+    def testAddLesson( self ):
+        ses = lesson_record( lesson_name, lesson_date )
         stud = student_record( student_id, student_name)
-        sp = session_points_record( session_date, student_id, True, False, True )
+        sp = lesson_points_record( lesson_date, student_id, True, False, True )
 
         ds = Datastore()
 
         ds.add_student( stud )
-        ds.add_session( ses )
-        ds.add_session_points( sp )
+        ds.add_lesson( ses )
+        ds.add_lesson_points( sp )
 
-        db_ses = ds.get_session_points_by_session( session_date )
+        db_ses = ds.get_lesson_points_by_lesson( lesson_date )
         self.assertEqual( sp, db_ses[0] )
 
-        db_stud = ds.get_session_points_by_stud( student_id )
+        db_stud = ds.get_lesson_points_by_stud( student_id )
         self.assertEqual( sp, db_stud[0] )
 
 
@@ -115,22 +115,22 @@ class test_datastore_queries_Student(unittest.TestCase):
         for i in range( 0,10 ):
             self.assertEqual( ids[i], u'john%04d'%(i, ) )
 
-class test_datastore_queries_Session(unittest.TestCase):
+class test_datastore_queries_Lesson(unittest.TestCase):
     def setUp( self ):
         self.ds = Datastore()
         for i in range( 0,10 ):
-            u = session_record( 'LearningSession%04d'%(i, ), date( test_year, test_month, i+1 ) )
-            self.ds.add_session( u )
+            u = lesson_record( 'LearningLesson%04d'%(i, ), date( test_year, test_month, i+1 ) )
+            self.ds.add_lesson( u )
 
-    def testQuerySession(self):
+    def testQueryLesson(self):
         for i in range( 0,10 ):
-            u = self.ds.get_session( date( test_year, test_month, i+1 ) )
-            self.assertEqual( u.name, 'LearningSession%04d'%(i, ), )
+            u = self.ds.get_lesson( date( test_year, test_month, i+1 ) )
+            self.assertEqual( u.name, 'LearningLesson%04d'%(i, ), )
 
-    def testQuerySessions(self):
-        sessions = self.ds.get_sessions_list()
+    def testQueryLessons(self):
+        lessons = self.ds.get_lessons_list()
         for i in range( 0,10 ):
-            self.assertEqual( sessions[i][0], date( test_year, test_month, i+1 ) )
+            self.assertEqual( lessons[i][0], date( test_year, test_month, i+1 ) )
 
 
 if __name__ == '__main__':
