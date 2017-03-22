@@ -15,33 +15,6 @@ def login_user( user, passwd ):
 def get_points_per_user( userid ):
     return {'absence': 1, 'attendance': 10, 'handins': 6, 'extra': 5, 'sum': 20 }
 
-def get_points_list_per_user( userid ):
-    absence =   [   { "date": "20170302", "lesson": "ITT1 SD" }]
-    attendance = [  { "date": "20170302", "lesson": "ITT1 SD", "lessonid": 23 },
-                    { "date": "20170102", "lesson": "ITT1 SD", "lessonid": 24 },
-                    { "date": "20170109", "lesson": "ITT1 SD", "lessonid": 25 },
-                    { "date": "20170116", "lesson": "ITT1 SD", "lessonid": 26 },
-                    { "date": "20170123", "lesson": "ITT1 SD", "lessonid": 27 },
-                    { "date": "20170130", "lesson": "ITT1 SD", "lessonid": 28 },
-                    { "date": "20170207", "lesson": "ITT1 SD", "lessonid": 29 },
-                    { "date": "20170214", "lesson": "ITT1 SD", "lessonid": 20 },
-                    { "date": "20170221", "lesson": "ITT1 SD", "lessonid": 21 } ]
-    handins = [     { "date": "20170302", "lesson": "ITT1 SD", "lessonid": 23 },
-                    { "date": "20170102", "lesson": "ITT1 SD", "lessonid": 24 },
-                    { "date": "20170109", "lesson": "ITT1 SD", "lessonid": 25 },
-                    { "date": "20170116", "lesson": "ITT1 SD", "lessonid": 26 },
-                    { "date": "20170123", "lesson": "ITT1 SD", "lessonid": 27 },
-                    { "date": "20170130", "lesson": "ITT1 SD", "lessonid": 28 } ]
-    extra = [       { "date": "20170202",
-                        "reason": "Awarded by class because of awesomeness", "points": 2},
-                    { "date": "20170202",
-                        "reason": "Participated in some event", "points": 1},
-                    { "date": "20170202",
-                        "reason": "Did something else that was awesome", "points": 2}  ]
-    return { 'absence': absence, "attendance": attendance,
-            "handins": handins, "extra": extra}
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
