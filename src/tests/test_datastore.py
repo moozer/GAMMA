@@ -154,13 +154,18 @@ class test_datastore_queries_Lesson(unittest.TestCase):
         for i in range( 0,10 ):
             self.assertEqual( lessons[i][0], date( test_year, test_month, i+1 ) )
 
-# class test_datastore_queries_sums(unittest.TestCase):
-#     def setUp( self ):
-#         self.ds = Datastore()
-#         init_db(self.ds)
-#
-#     def testQueryStudent(self):
-#         self.ds.get_sum_per_student('John01')
+class test_datastore_queries_sums(unittest.TestCase):
+    def setUp( self ):
+        self.ds = Datastore()
+        init_db(self.ds)
+
+    def testQueryStudent(self):
+        points = self.ds.get_sum_by_student('john0001')
+
+        self.assertEqual( points.attendance, 12)
+        self.assertEqual( points.absence, 0)
+        self.assertEqual( points.handins, 12)
+        self.assertEqual( points.extra, 3)
 
 
 

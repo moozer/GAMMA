@@ -12,6 +12,9 @@ from extra_points import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import desc, asc
 
+student_points_record = collections.namedtuple('sturdent_points_record',
+                            ['attendance', 'handins', 'absence', 'extra'])
+
 
 
 class Datastore(object):
@@ -44,6 +47,16 @@ class Datastore(object):
                             ).order_by(asc(Student.student_id)):
             ids.append(stud.student_id)
         return ids
+
+    def get_sum_by_student(self, student_id ):
+       lesson_points_list = self.get_lesson_points_by_stud(student_id)
+       extra_points_list = self.get_extra_points_by_student(student_id)
+
+       return student_points_record(
+            attendance=sum( 1 for entry in lesson_points_list if entry.attendance),
+            handins=sum( 1 for entry in lesson_points_list if entry.handin),
+            absence=sum( 1 for entry in lesson_points_list if entry.absence),
+            extra=sum( ep.points for ep in extra_points_list ) )
 
     # --- lessons ----
     def get_lesson(self, id, id_type="Date"):
