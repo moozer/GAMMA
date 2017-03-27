@@ -12,7 +12,8 @@ from extra_points import *
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import desc, asc
 
-student_points_record = collections.namedtuple('sturdent_points_record',
+student_points_record = collections.namedtuple(
+                            'student_points_record',
                             ['attendance', 'handins', 'absence', 'extra'])
 
 
