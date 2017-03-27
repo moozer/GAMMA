@@ -1,6 +1,11 @@
 import argparse
 import csv
 
+import sys
+sys.path.append('..')
+
+from datastore import student_record
+
 def get_args():
     parser = argparse.ArgumentParser(description='read student info from csv file and stores them in database')
 
@@ -29,17 +34,16 @@ def get_args():
 if __name__ == "__main__":
     args = get_args()
 
-    print args
-
     print "Import student data from %s"% args.csvfile
     print "- Database: %s"% args.database
 
     print "- Reading students"
     with open(args.csvfile, 'rb') as csvfile:
-         studreader = csv.reader(csvfile, delimiter=';')
+        studreader = csv.reader(csvfile, delimiter=';')
 
-         if args.skip_first_line:
-             next(studreader)  # skip header row
+        if args.skip_first_line:
+            next(studreader)  # skip header row
 
-         for stud in studreader:
-             print "-- ", stud[2], " -- ", stud[4]
+        for stud in studreader:
+            print "-- ", student_record(id=stud[2],
+                                        name=stud[4].decode('iso8859-1') )
