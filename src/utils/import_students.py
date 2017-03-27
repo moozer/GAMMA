@@ -13,7 +13,7 @@ def get_args():
                         type=int,
                         help="column containing student id")
     parser.add_argument("-d", "--database",
-                        default="../data/gamma.db",
+                        default="data/gamma.db",
                         help="database file to use")
 
     args = parser.parse_args()
@@ -24,6 +24,5 @@ def get_args():
 if __name__ == "__main__":
     args = get_args()
 
-    print "Import student data from %s"% args.csvname
+    print "Import student data from %s"% args.csvfile
     print "- Database: %s"% args.database
-    
