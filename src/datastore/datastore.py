@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 Base = declarative_base()
 
@@ -28,17 +28,27 @@ class Datastore(object):
         DatastoreSessionMaker = sessionmaker(bind=engine)
         self.session = DatastoreSessionMaker()
 
+    # --- sql related decorators -----
+    def db_guard(func):
+        ''' handles commit on success and roolback om error
+        '''
+        def func_wrapper(self, *args, **kwargs):
+            try:
+                func(self, *args, **kwargs)
+                self.session.commit()
+            except SQLAlchemyError:
+                self.session.rollback()
+                raise
+
+        return func_wrapper
+
     # --- students ----
+    @db_guard
     def add_student(self, student):
         u = Student(student_id=student.id,
                     name=student.name)
 
-        try:
-            self.session.add(u)
-            self.session.commit()
-        except:
-            self.session.rollback()
-            raise
+        self.session.add(u)
 
     def get_student(self, student_id):
         s = self.session.query(Student).filter(
