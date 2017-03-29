@@ -2,9 +2,13 @@ import argparse
 import csv
 
 import sys
-sys.path.append('..')
 
-from datastore import student_record
+import os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+sys.path.append(dir_path+'/..')
+
+from datastore import *
 
 def get_args():
     parser = argparse.ArgumentParser(description='read student info from csv file and stores them in database')
@@ -35,9 +39,11 @@ if __name__ == "__main__":
     args = get_args()
 
     print "Import student data from %s"% args.csvfile
-    print "- Database: %s"% args.database
 
-    print "- Reading students"
+    print "- Database: %s"% args.database
+    ds = Datastore(args.database )
+
+    print "- Importing students"
     with open(args.csvfile, 'rb') as csvfile:
         studreader = csv.reader(csvfile, delimiter=';')
 
@@ -45,5 +51,11 @@ if __name__ == "__main__":
             next(studreader)  # skip header row
 
         for stud in studreader:
-            print "-- ", student_record(id=stud[2],
-                                        name=stud[4].decode('iso8859-1') )
+            s = student_record(id=stud[2],
+                               name=stud[4].decode('iso8859-1') )
+            print "-- ", s
+            try:
+                ds.add_student(s)
+            except IntegrityError, ex:
+                print "--- DB error: User already exists?"
+                print "---", ex
