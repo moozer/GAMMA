@@ -62,6 +62,14 @@ class test_datastore_basic(unittest.TestCase):
 
         self.assertEqual( u, db_u )
 
+    def testAddStudentTwice( self ):
+        u = student_record( student_id, student_name)
+        ds = Datastore()
+
+        ds.add_student( u )
+        self.assertRaises(IntegrityError, ds.add_student, u )
+
+
     def testLessonMap(self):
         s = lesson_record( lesson_name, lesson_date )
 
