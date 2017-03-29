@@ -69,6 +69,22 @@ class test_datastore_basic(unittest.TestCase):
         ds.add_student( u )
         self.assertRaises(IntegrityError, ds.add_student, u )
 
+    def testAddStudentContinueAfterException( self ):
+        u1 = student_record( student_id, student_name)
+        u2 = student_record( student_id+'2', student_name)
+        ds = Datastore()
+
+        ds.add_student( u1 )
+        try:
+            ds.add_student( u1 )
+        except IntegrityError:
+            pass
+
+        ds.add_student( u2 )
+        db_u2 = ds.get_student( student_id+'2' )
+        self.assertEqual( u2, db_u2 )
+
+
 
     def testLessonMap(self):
         s = lesson_record( lesson_name, lesson_date )

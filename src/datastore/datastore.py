@@ -32,8 +32,13 @@ class Datastore(object):
     def add_student(self, student):
         u = Student(student_id=student.id,
                     name=student.name)
-        self.session.add(u)
-        self.session.commit()
+
+        try:
+            self.session.add(u)
+            self.session.commit()
+        except:
+            self.session.rollback()
+            raise
 
     def get_student(self, student_id):
         s = self.session.query(Student).filter(
