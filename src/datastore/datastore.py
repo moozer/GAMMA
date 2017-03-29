@@ -84,11 +84,11 @@ class Datastore(object):
                     ).first()
         return lesson_record(s.name, s.date)
 
+    @db_guard
     def add_lesson(self, lesson):
         u = Lesson(date=lesson.date,
                     name=lesson.name)
         self.session.add(u)
-        self.session.commit()
 
     def get_lessons_list(self):
         return self.session.query(

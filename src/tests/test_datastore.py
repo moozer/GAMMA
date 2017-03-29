@@ -84,8 +84,6 @@ class test_datastore_basic(unittest.TestCase):
         db_u2 = ds.get_student( student_id+'2' )
         self.assertEqual( u2, db_u2 )
 
-
-
     def testLessonMap(self):
         s = lesson_record( lesson_name, lesson_date )
 
@@ -100,6 +98,31 @@ class test_datastore_basic(unittest.TestCase):
         db_s = ds.get_lesson( lesson_date )
 
         self.assertEqual( s, db_s )
+
+    def testAddLessonTwice( self ):
+        s = lesson_record( lesson_name, lesson_date )
+        ds = Datastore()
+
+        ds.add_lesson(s)
+        self.assertRaises(IntegrityError, ds.add_lesson, s )
+
+    def testAddLessonContinueAfterError( self ):
+        s1 = lesson_record( lesson_name, lesson_date )
+        s2_date = date( test_year, test_month, test_day+1 )
+        s2 = lesson_record( lesson_name+'2', s2_date )
+        ds = Datastore()
+
+        ds.add_lesson(s1)
+        try:
+            ds.add_lesson(s1)
+        except:
+            pass
+
+        ds.add_lesson(s2)
+        db_s2 = ds.get_lesson( s2_date )
+
+        self.assertEqual( s2, db_s2 )
+
 
     def testLessonPointsMap(self):
         s = lesson_points_record( lesson_date, student_id, True, False, True )
