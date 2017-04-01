@@ -14,19 +14,17 @@
 					<th>Handins</th>
 					<th>Extra</th>
 					<th>Points</th>
-					<th>More</th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for stud in points_list %}
 				<tr>
-					<td>{{stud.name}}</td>
+					<td><a href="/points/{{stud.id}}">{{stud.name}}</a></td>
 					<td>{{stud.points.attendance}}</td>
 					<td>{{stud.points.absense}}</td>
 					<td>{{stud.points.handins}}</td>
 					<td>{{stud.points.extra}}</td>
 					<td>{{stud.points.sum}}</td>
-					<td><a href="/points/{{stud.id}}">details</a></td>
 				</tr>
 				{% endfor %}
 			</tbody>
