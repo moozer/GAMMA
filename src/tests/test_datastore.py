@@ -244,7 +244,14 @@ class test_datastore_queries_sums(unittest.TestCase):
         self.assertEqual( points.handins, 12)
         self.assertEqual( points.extra, 3)
 
+class test_datastore_queries_extra_points(unittest.TestCase):
+    def setUp( self ):
+        self.ds = Datastore()
+        init_db(self.ds)
 
+    def testAddPointsToNonexist(self):
+        ep = extra_points_record( some_date, 'bad_id', points=5, reason=some_text )
+        self.assertRaises(IntegrityError, self.ds.add_extra_points, ep )
 
 if __name__ == '__main__':
     unittest.main()

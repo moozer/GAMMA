@@ -1,5 +1,5 @@
 from datastore import Base
-from sqlalchemy import Column, Integer, String, Date, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Date, UniqueConstraint, ForeignKey
 import collections
 
 
@@ -8,7 +8,7 @@ class Extra_points(Base):
 
     id = Column(Integer, primary_key=True)
     date = Column(Date)
-    student_id = Column(String)
+    student_id = Column(String, ForeignKey("students.student_id") )
     points = Column(Integer)
     reason = Column(String)
     __table_args__ = (UniqueConstraint('date', 'student_id', 'reason', name='no_dupes'),
