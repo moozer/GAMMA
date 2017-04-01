@@ -4,9 +4,8 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
 from datetime import date, datetime
 from datastore import *
 
-
 app = Flask(__name__)
-ds = Datastore()
+ds = Datastore( filename="data/gamma.db")
 
 # might need improving...
 def login_user( user, passwd ):
@@ -79,36 +78,9 @@ def lessons( lesson_date_str=None ):
         sp = ds.get_lesson_points_by_lesson( lesson_date )
         return render_template('lessons_detailed.html', lesson=s, points=sp )
 
-def init_db( ds ):
-    student_count = 10
-    lessons_count = 12
-    extra_points_count = 3
-
-    for i in range( 0,student_count ):
-        ds.add_student( student_record( 'john%04d'%(i, ), "John %d"%(i,) ) )
-
-    for i in range( 0,lessons_count ):
-        ds.add_lesson( lesson_record( 'LearningSession%04d'%(i, ), date( 2017, 02, i+1) ) )
-
-    for user_i in range( 0,student_count ):
-        for lesson_i in range( 0,lessons_count ):
-            ds.add_lesson_points(
-                lesson_points_record( date( 2017, 02, lesson_i+1), 'john%04d'%(user_i, ),
-                                        True, False, True ) )
-
-    for user_i in range( student_count ):
-        for ep_i in range( extra_points_count ):
-            ds.add_extra_points(
-                    extra_points_record(
-                        date( 2017, 02, ep_i+1),
-                        student_id='john%04d'%(user_i, ),
-                        points=1,
-                        reason="Some valid reason #%d" % (user_i+ep_i, )
-                        ))
-
 
 if __name__ == "__main__":
     app.secret_key = 'super secret key'
 
-    init_db( ds )
+    # init_db( ds )
     app.run()
