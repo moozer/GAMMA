@@ -128,6 +128,7 @@ class Datastore(object):
         return ret
 
     # --- extra_points ----
+    @db_guard
     def add_extra_points(self, extra_points):
         sp = Extra_points(date=extra_points.date,
                           student_id=extra_points.student_id,
@@ -135,7 +136,6 @@ class Datastore(object):
                           reason=extra_points.reason
                           )
         self.session.add(sp)
-        self.session.commit()
 
     def get_extra_points_by_student(self, student_id):
         eps = self.session.query(Extra_points).filter(
