@@ -97,6 +97,8 @@ class Datastore(object):
                     name=lesson.name)
         self.session.add(u)
 
+        self.autofill_stud_to_lesson(lesson_id=lesson.date)
+
     def get_lessons_list(self):
         return self.session.query(
                         Lesson.date,
@@ -133,6 +135,21 @@ class Datastore(object):
                          sp.lesson_id, sp.student_id,
                          sp.attendance, sp.absence, sp.handin))
         return ret
+
+    def autofill_stud_to_lesson(self, lesson_id):
+        lps = self.get_lesson_points_by_lesson( lesson_id )
+        lp_students = [lp.student_id for lp in lps ]
+        students = self.get_student_ids()
+        print lps
+        print students
+
+        for student in students:
+            if student not in lp_students:
+                stud_lp = lesson_points_record(
+                        lesson_id=lesson_id, student_id=student,
+                        handin=False, absence=False, attendance=False)
+                self.add_lesson_points( stud_lp )
+
 
     # --- extra_points ----
     @db_guard

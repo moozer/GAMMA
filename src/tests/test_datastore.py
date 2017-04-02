@@ -99,6 +99,21 @@ class test_datastore_basic(unittest.TestCase):
 
         self.assertEqual( s, db_s )
 
+    def testAddLessonStudPoints( self ):
+        s = lesson_record( lesson_name, lesson_date )
+        u = student_record( student_id, student_name)
+        ds = Datastore()
+
+        ds.add_student( u )
+        ds.add_lesson(s)
+        sp = lesson_points_record(
+                lesson_id=lesson_date, student_id=student_id,
+                handin=False, attendance=False, absence=False)
+
+        db_stud = ds.get_lesson_points_by_stud( student_id )
+        self.assertEqual( sp, db_stud[0] )
+
+
     def testAddLessonTwice( self ):
         s = lesson_record( lesson_name, lesson_date )
         ds = Datastore()
@@ -140,8 +155,9 @@ class test_datastore_basic(unittest.TestCase):
 
         ds = Datastore()
 
-        ds.add_student( stud )
+        # note: stud not existing when lesson is added
         ds.add_lesson( ses )
+        ds.add_student( stud )
         ds.add_lesson_points( sp )
 
         db_ses = ds.get_lesson_points_by_lesson( lesson_date )
@@ -150,6 +166,24 @@ class test_datastore_basic(unittest.TestCase):
         db_stud = ds.get_lesson_points_by_stud( student_id )
         self.assertEqual( sp, db_stud[0] )
 
+
+    # def testUpdateLessonPoints( self ):
+    #     ses = lesson_record( lesson_name, lesson_date )
+    #     stud = student_record( student_id, student_name)
+    #     sp = lesson_points_record( lesson_date, student_id, True, False, True )
+    #
+    #     ds = Datastore()
+    #
+    #     ds.add_student( stud )
+    #     ds.add_lesson( ses )
+    #     ds.add_lesson_points( sp )
+    #
+    #     db_ses = ds.get_lesson_points_by_lesson( lesson_date )
+    #     self.assertEqual( sp, db_ses[0] )
+    #
+    #     db_stud = ds.get_lesson_points_by_stud( student_id )
+    #     self.assertEqual( sp, db_stud[0] )
+    #
 
     def testExtraPointsMap(self):
         ep = extra_points_record( some_date, student_id, points=5, reason=some_text )
