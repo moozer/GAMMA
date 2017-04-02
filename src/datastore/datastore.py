@@ -107,18 +107,53 @@ class Datastore(object):
 
     # --- lesson_points ----
     def add_lesson_points(self, lesson_points):
-        sp = Lesson_points(lesson_id=lesson_points.lesson_id,
+        ''' add or update lesson points
+        '''
+
+        sps = self._get_lesson_points(
+                            lesson_id=lesson_points.lesson_id,
                             student_id=lesson_points.student_id,
-                            attendance=lesson_points.attendance,
-                            absence=lesson_points.absence,
-                            handin=lesson_points.handin
                             )
-        self.session.add(sp)
+#        print "add_lesson_points", sps
+
+        if sps.count() < 1:
+
+            #print __name__, "adding, not updating"
+            sp = Lesson_points(lesson_id=lesson_points.lesson_id,
+                                student_id=lesson_points.student_id,
+                                attendance=lesson_points.attendance,
+                                absence=lesson_points.absence,
+                                handin=lesson_points.handin
+                                )
+
+            self.session.add(sp)
+
+        # self.session.update().values(
+        #     name=select([addresses.c.email_address]).\
+        #             where(addresses.c.user_id==users.c.id).\
+        #             as_scalar()
+        #             )
         self.session.commit()
 
+    def _get_lesson_points( self, lesson_id=None, student_id=None):
+        if lesson_id and student_id:
+            return self.session.query(Lesson_points).filter(
+                        Lesson_points.lesson_id==lesson_id,
+                        Lesson_points.student_id==student_id)
+        elif lesson_id:
+            return self.session.query(Lesson_points).filter(
+                            Lesson_points.lesson_id == lesson_id )
+        elif student_id:
+            return self.session.query(Lesson_points).filter(
+                            Lesson_points.student_id == student_id )
+
+        return self.session.query(Lesson_points)
+
     def get_lesson_points_by_lesson(self, lesson_id):
-        sps = self.session.query(Lesson_points).filter(
-                        Lesson_points.lesson_id == lesson_id)
+        #sps = self.session.query(Lesson_points).filter(
+        #                Lesson_points.lesson_id == lesson_id)
+
+        sps = self._get_lesson_points( lesson_id=lesson_id)
         ret = []
         for sp in sps:
             ret.append(lesson_points_record(
@@ -127,8 +162,13 @@ class Datastore(object):
         return ret
 
     def get_lesson_points_by_stud(self, student_id):
-        sps = self.session.query(Lesson_points).filter(
-                        Lesson_points.student_id == student_id)
+        # sps = self.session.query(Lesson_points).filter(
+        #                 Lesson_points.student_id == student_id)
+
+        sps = self._get_lesson_points( student_id=student_id)
+
+        print sps
+
         ret = []
         for sp in sps:
             ret.append(lesson_points_record(
@@ -140,8 +180,6 @@ class Datastore(object):
         lps = self.get_lesson_points_by_lesson( lesson_id )
         lp_students = [lp.student_id for lp in lps ]
         students = self.get_student_ids()
-        print lps
-        print students
 
         for student in students:
             if student not in lp_students:

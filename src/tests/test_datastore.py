@@ -98,7 +98,7 @@ class test_datastore_basic(unittest.TestCase):
         db_s = ds.get_lesson( lesson_date )
 
         self.assertEqual( s, db_s )
-
+    
     def testAddLessonStudPoints( self ):
         s = lesson_record( lesson_name, lesson_date )
         u = student_record( student_id, student_name)
@@ -111,62 +111,78 @@ class test_datastore_basic(unittest.TestCase):
                 handin=False, attendance=False, absence=False)
 
         db_stud = ds.get_lesson_points_by_stud( student_id )
+
         self.assertEqual( sp, db_stud[0] )
 
-
-    def testAddLessonTwice( self ):
-        s = lesson_record( lesson_name, lesson_date )
-        ds = Datastore()
-
-        ds.add_lesson(s)
-        self.assertRaises(IntegrityError, ds.add_lesson, s )
-
-    def testAddLessonContinueAfterError( self ):
-        s1 = lesson_record( lesson_name, lesson_date )
-        s2_date = date( test_year, test_month, test_day+1 )
-        s2 = lesson_record( lesson_name+'2', s2_date )
-        ds = Datastore()
-
-        ds.add_lesson(s1)
-        try:
-            ds.add_lesson(s1)
-        except:
-            pass
-
-        ds.add_lesson(s2)
-        db_s2 = ds.get_lesson( s2_date )
-
-        self.assertEqual( s2, db_s2 )
-
-
-    def testLessonPointsMap(self):
-        s = lesson_points_record( lesson_date, student_id, True, False, True )
-
-        self.assertEqual( s.student_id, student_id )
-        self.assertEqual( s.lesson_id, lesson_date )
-        self.assertEqual( s.attendance, True )
-        self.assertEqual( s.absence, False )
-        self.assertEqual( s.handin, True )
-
-    def testAddLessonPoints( self ):
-        ses = lesson_record( lesson_name, lesson_date )
-        stud = student_record( student_id, student_name)
-        sp = lesson_points_record( lesson_date, student_id, True, False, True )
-
-        ds = Datastore()
-
-        # note: stud not existing when lesson is added
-        ds.add_lesson( ses )
-        ds.add_student( stud )
-        ds.add_lesson_points( sp )
-
-        db_ses = ds.get_lesson_points_by_lesson( lesson_date )
-        self.assertEqual( sp, db_ses[0] )
-
-        db_stud = ds.get_lesson_points_by_stud( student_id )
-        self.assertEqual( sp, db_stud[0] )
-
-
+    #
+    # def testAddLessonTwice( self ):
+    #     s = lesson_record( lesson_name, lesson_date )
+    #     ds = Datastore()
+    #
+    #     ds.add_lesson(s)
+    #     self.assertRaises(IntegrityError, ds.add_lesson, s )
+    #
+    # def testAddLessonContinueAfterError( self ):
+    #     s1 = lesson_record( lesson_name, lesson_date )
+    #     s2_date = date( test_year, test_month, test_day+1 )
+    #     s2 = lesson_record( lesson_name+'2', s2_date )
+    #     ds = Datastore()
+    #
+    #     ds.add_lesson(s1)
+    #     try:
+    #         ds.add_lesson(s1)
+    #     except:
+    #         pass
+    #
+    #     ds.add_lesson(s2)
+    #     db_s2 = ds.get_lesson( s2_date )
+    #
+    #     self.assertEqual( s2, db_s2 )
+    #
+    #
+    # def testLessonPointsMap(self):
+    #     s = lesson_points_record( lesson_date, student_id, True, False, True )
+    #
+    #     self.assertEqual( s.student_id, student_id )
+    #     self.assertEqual( s.lesson_id, lesson_date )
+    #     self.assertEqual( s.attendance, True )
+    #     self.assertEqual( s.absence, False )
+    #     self.assertEqual( s.handin, True )
+    #
+    # def testAddLessonPoints( self ):
+    #     ses = lesson_record( lesson_name, lesson_date )
+    #     stud = student_record( student_id, student_name)
+    #     sp = lesson_points_record( lesson_date, student_id, True, False, True )
+    #
+    #     ds = Datastore()
+    #
+    #     # note: stud not existing when lesson is added
+    #     ds.add_lesson( ses )
+    #     ds.add_student( stud )
+    #     print __name__, sp
+    #     ds.add_lesson_points( sp )
+    #
+    #     db_ses = ds.get_lesson_points_by_lesson( lesson_date )
+    #     self.assertEqual( sp, db_ses[0] )
+    #
+    #     db_stud = ds.get_lesson_points_by_stud( student_id )
+    #     self.assertEqual( sp, db_stud[0] )
+    #
+    # def testAddLessonPointsTwice( self ):
+    #     ses = lesson_record( lesson_name, lesson_date )
+    #     stud = student_record( student_id, student_name)
+    #     sp = lesson_points_record( lesson_date, student_id, True, False, True )
+    #     sp2 = lesson_points_record( lesson_date, student_id, True, False, False )
+    #
+    #     ds = Datastore()
+    #
+    #     # note: stud not existing when lesson is added
+    #     ds.add_lesson( ses )
+    #     ds.add_student( stud )
+    #     ds.add_lesson_points( sp )
+    #     self.assertRaises( IntegrityError, ds.add_lesson_points, sp2 )
+    #
+    #
     # def testUpdateLessonPoints( self ):
     #     ses = lesson_record( lesson_name, lesson_date )
     #     stud = student_record( student_id, student_name)
@@ -178,114 +194,113 @@ class test_datastore_basic(unittest.TestCase):
     #     ds.add_lesson( ses )
     #     ds.add_lesson_points( sp )
     #
+    #     sp_new = lesson_points_record( lesson_date, student_id, True, False, False )
+    #
     #     db_ses = ds.get_lesson_points_by_lesson( lesson_date )
-    #     self.assertEqual( sp, db_ses[0] )
+    #     self.assertEqual( sp_new, db_ses[0] )
     #
-    #     db_stud = ds.get_lesson_points_by_stud( student_id )
-    #     self.assertEqual( sp, db_stud[0] )
     #
+    # def testExtraPointsMap(self):
+    #     ep = extra_points_record( some_date, student_id, points=5, reason=some_text )
+    #
+    #     self.assertEqual( ep.student_id, student_id )
+    #     self.assertEqual( ep.date, some_date )
+    #     self.assertEqual( ep.points, 5 )
+    #     self.assertEqual( ep.reason, some_text )
+    #
+    # def testAddExtraPoints( self ):
+    #     ds = Datastore()
+    #
+    #     stud = student_record( student_id, student_name)
+    #     ds.add_student( stud )
+    #
+    #     ep = extra_points_record( some_date, student_id, points=5, reason=some_text )
+    #     ds.add_extra_points( ep )
+    #
+    #     db_ses = ds.get_extra_points_by_student( student_id )
+    #     self.assertEqual( ep, db_ses[0] )
+    #
+    # def testAddExtraPointsTwice( self ):
+    #     ds = Datastore()
+    #
+    #     stud = student_record( student_id, student_name)
+    #     ds.add_student( stud )
+    #
+    #     ep = extra_points_record( some_date, student_id, points=5, reason=some_text )
+    #     ds.add_extra_points( ep )
+    #     self.assertRaises(IntegrityError, ds.add_extra_points, ep )
+    #
+    # def testAddExtraPointsContinueAfterError( self ):
+    #     ds = Datastore()
+    #
+    #     stud = student_record( student_id, student_name)
+    #     ds.add_student( stud )
+    #
+    #     ep = extra_points_record( some_date, student_id, points=5, reason=some_text )
+    #     ds.add_extra_points( ep )
+    #
+    #     try:
+    #         ds.add_extra_points( ep )
+    #     except:
+    #         pass
+    #
+    #     ep2 = extra_points_record( some_date, student_id, points=5, reason=some_text+' more' )
+    #     ds.add_extra_points( ep2 )
+    #     db_ses = ds.get_extra_points_by_student( student_id )
+    #     self.assertEqual( ep2, db_ses[1] )
 
-    def testExtraPointsMap(self):
-        ep = extra_points_record( some_date, student_id, points=5, reason=some_text )
 
-        self.assertEqual( ep.student_id, student_id )
-        self.assertEqual( ep.date, some_date )
-        self.assertEqual( ep.points, 5 )
-        self.assertEqual( ep.reason, some_text )
+# class test_datastore_queries_Student(unittest.TestCase):
+#     def setUp( self ):
+#         self.ds = Datastore()
+#         init_db(self.ds)
+#
+#     def testQueryStudent(self):
+#         for i in range( 0,10 ):
+#             u = self.ds.get_student( u'john%04d'%(i, ) )
+#             self.assertEqual( u.name, u"John %d"%(i,) )
+#
+#     def testQueryStudentIds(self):
+#         ids = self.ds.get_student_ids()
+#         for i in range( 0,10 ):
+#             self.assertEqual( ids[i], u'john%04d'%(i, ) )
 
-    def testAddExtraPoints( self ):
-        ds = Datastore()
-
-        stud = student_record( student_id, student_name)
-        ds.add_student( stud )
-
-        ep = extra_points_record( some_date, student_id, points=5, reason=some_text )
-        ds.add_extra_points( ep )
-
-        db_ses = ds.get_extra_points_by_student( student_id )
-        self.assertEqual( ep, db_ses[0] )
-
-    def testAddExtraPointsTwice( self ):
-        ds = Datastore()
-
-        stud = student_record( student_id, student_name)
-        ds.add_student( stud )
-
-        ep = extra_points_record( some_date, student_id, points=5, reason=some_text )
-        ds.add_extra_points( ep )
-        self.assertRaises(IntegrityError, ds.add_extra_points, ep )
-
-    def testAddExtraPointsContinueAfterError( self ):
-        ds = Datastore()
-
-        stud = student_record( student_id, student_name)
-        ds.add_student( stud )
-
-        ep = extra_points_record( some_date, student_id, points=5, reason=some_text )
-        ds.add_extra_points( ep )
-
-        try:
-            ds.add_extra_points( ep )
-        except:
-            pass
-
-        ep2 = extra_points_record( some_date, student_id, points=5, reason=some_text+' more' )
-        ds.add_extra_points( ep2 )
-        db_ses = ds.get_extra_points_by_student( student_id )
-        self.assertEqual( ep2, db_ses[1] )
-
-
-class test_datastore_queries_Student(unittest.TestCase):
-    def setUp( self ):
-        self.ds = Datastore()
-        init_db(self.ds)
-
-    def testQueryStudent(self):
-        for i in range( 0,10 ):
-            u = self.ds.get_student( u'john%04d'%(i, ) )
-            self.assertEqual( u.name, u"John %d"%(i,) )
-
-    def testQueryStudentIds(self):
-        ids = self.ds.get_student_ids()
-        for i in range( 0,10 ):
-            self.assertEqual( ids[i], u'john%04d'%(i, ) )
-
-class test_datastore_queries_Lesson(unittest.TestCase):
-    def setUp( self ):
-        self.ds = Datastore()
-        init_db(self.ds)
-
-    def testQueryLesson(self):
-        for i in range( 0,10 ):
-            u = self.ds.get_lesson( date( test_year, test_month, i+1 ) )
-            self.assertEqual( u.name, 'LearningLesson%04d'%(i, ), )
-
-    def testQueryLessons(self):
-        lessons = self.ds.get_lessons_list()
-        for i in range( 0,10 ):
-            self.assertEqual( lessons[i][0], date( test_year, test_month, i+1 ) )
-
-class test_datastore_queries_sums(unittest.TestCase):
-    def setUp( self ):
-        self.ds = Datastore()
-        init_db(self.ds)
-
-    def testQueryStudent(self):
-        points = self.ds.get_sum_by_student('john0001')
-
-        self.assertEqual( points.attendance, 12)
-        self.assertEqual( points.absence, 0)
-        self.assertEqual( points.handins, 12)
-        self.assertEqual( points.extra, 3)
-
-class test_datastore_queries_extra_points(unittest.TestCase):
-    def setUp( self ):
-        self.ds = Datastore()
-        init_db(self.ds)
-
-    def testAddPointsToNonexist(self):
-        ep = extra_points_record( some_date, 'bad_id', points=5, reason=some_text )
-        self.assertRaises(IntegrityError, self.ds.add_extra_points, ep )
+# class test_datastore_queries_Lesson(unittest.TestCase):
+#     def setUp( self ):
+#         self.ds = Datastore()
+#         init_db(self.ds)
+#
+#     def testQueryLesson(self):
+#         for i in range( 0,10 ):
+#             u = self.ds.get_lesson( date( test_year, test_month, i+1 ) )
+#             self.assertEqual( u.name, 'LearningLesson%04d'%(i, ), )
+#
+#     def testQueryLessons(self):
+#         lessons = self.ds.get_lessons_list()
+#         for i in range( 0,10 ):
+#             self.assertEqual( lessons[i][0], date( test_year, test_month, i+1 ) )
+#
+# class test_datastore_queries_sums(unittest.TestCase):
+#     def setUp( self ):
+#         self.ds = Datastore()
+#         init_db(self.ds)
+#
+#     def testQueryStudent(self):
+#         points = self.ds.get_sum_by_student('john0001')
+#
+#         self.assertEqual( points.attendance, 12)
+#         self.assertEqual( points.absence, 0)
+#         self.assertEqual( points.handins, 12)
+#         self.assertEqual( points.extra, 3)
+#
+# class test_datastore_queries_extra_points(unittest.TestCase):
+#     def setUp( self ):
+#         self.ds = Datastore()
+#         init_db(self.ds)
+#
+#     def testAddPointsToNonexist(self):
+#         ep = extra_points_record( some_date, 'bad_id', points=5, reason=some_text )
+#         self.assertRaises(IntegrityError, self.ds.add_extra_points, ep )
 
 if __name__ == '__main__':
     unittest.main()
