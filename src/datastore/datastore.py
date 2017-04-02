@@ -95,15 +95,13 @@ class Datastore(object):
     def add_lesson(self, lesson):
         ''' add a lesson or a list of lessons
         '''
-        print "XX", lesson
         if isinstance( lesson, list ):
             for l in lesson:
                 self._add_lesson( l )
-                print "XX", l.date
-                self.autofill_stud_to_lesson(lesson_id=l.date)
+                self._autofill_stud_to_lesson(lesson_id=l.date)
         else:
             self._add_lesson( lesson )
-            self.autofill_stud_to_lesson(lesson_id=lesson.date)
+            self._autofill_stud_to_lesson(lesson_id=lesson.date)
 
     def _add_lesson( self, lesson ):
         u = Lesson(date=lesson.date,
@@ -135,7 +133,12 @@ class Datastore(object):
                             lesson_id=lesson_points.lesson_id,
                             student_id=lesson_points.student_id,
                             )
-        if sps.count() < 1:
+
+        try:
+            sps[0].attendance = lesson_points.attendance
+            sps[0].handin = lesson_points.handin
+            sps[0].absence = lesson_points.absence
+        except IndexError:
             sp = Lesson_points(lesson_id=lesson_points.lesson_id,
                                 student_id=lesson_points.student_id,
                                 attendance=lesson_points.attendance,
@@ -144,10 +147,7 @@ class Datastore(object):
                                 )
 
             self.session.add(sp)
-        else:
-            sps[0].attendance = lesson_points.attendance
-            sps[0].handin = lesson_points.handin
-            sps[0].absence = lesson_points.absence
+
 
     def _get_lesson_points( self, lesson_id=None, student_id=None):
         if lesson_id and student_id:
@@ -188,7 +188,7 @@ class Datastore(object):
                          sp.attendance, sp.absence, sp.handin))
         return ret
 
-    def autofill_stud_to_lesson(self, lesson_id):
+    def _autofill_stud_to_lesson(self, lesson_id):
         lps = self.get_lesson_points_by_lesson( lesson_id )
         lp_students = [lp.student_id for lp in lps ]
         students = self.get_student_ids()
@@ -198,7 +198,7 @@ class Datastore(object):
                 stud_lp = lesson_points_record(
                         lesson_id=lesson_id, student_id=student,
                         handin=False, absence=False, attendance=False)
-                self.add_lesson_points( stud_lp )
+                self._add_lesson_points( stud_lp )
 
 
     # --- extra_points ----

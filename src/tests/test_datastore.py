@@ -20,11 +20,7 @@ some_text = "awesome!"
 lesson_name = "Some lesson"
 lesson_date = some_date
 
-def init_db( ds ):
-    student_count = 10
-    lessons_count = 12
-    extra_points_count = 3
-
+def init_db( ds, student_count = 5, lessons_count = 6, extra_points_count = 3 ):
     for i in range( 0,student_count ):
         ds.add_student( student_record( 'john%04d'%(i, ), "John %d"%(i,) ) )
 
@@ -281,45 +277,54 @@ class test_datastore_basic(unittest.TestCase):
 
 class test_datastore_queries_Student(unittest.TestCase):
     def setUp( self ):
+        self.student_count = 5
+        self.lesson_count = 6
         self.ds = Datastore()
-        init_db(self.ds)
+        init_db(self.ds, student_count = self.student_count,
+            lessons_count=self.lesson_count)
 
     def testQueryStudent(self):
-        for i in range( 0,10 ):
+        for i in range( 0,self.student_count ):
             u = self.ds.get_student( u'john%04d'%(i, ) )
             self.assertEqual( u.name, u"John %d"%(i,) )
 
     def testQueryStudentIds(self):
         ids = self.ds.get_student_ids()
-        for i in range( 0,10 ):
+        for i in range( 0,self.student_count ):
             self.assertEqual( ids[i], u'john%04d'%(i, ) )
 
 class test_datastore_queries_Lesson(unittest.TestCase):
     def setUp( self ):
+        self.student_count = 5
+        self.lesson_count = 6
         self.ds = Datastore()
-        init_db(self.ds)
+        init_db(self.ds, student_count = self.student_count,
+            lessons_count=self.lesson_count)
 
     def testQueryLesson(self):
-        for i in range( 0,10 ):
+        for i in range( 0,self.student_count ):
             u = self.ds.get_lesson( date( test_year, test_month, i+1 ) )
             self.assertEqual( u.name, 'LearningLesson%04d'%(i, ), )
 
     def testQueryLessons(self):
         lessons = self.ds.get_lessons_list()
-        for i in range( 0,10 ):
+        for i in range( 0,self.student_count ):
             self.assertEqual( lessons[i][0], date( test_year, test_month, i+1 ) )
 
 class test_datastore_queries_sums(unittest.TestCase):
     def setUp( self ):
+        self.student_count = 5
+        self.lesson_count = 6
         self.ds = Datastore()
-        init_db(self.ds)
+        init_db(self.ds, student_count = self.student_count,
+            lessons_count=self.lesson_count)
 
     def testQueryStudent(self):
         points = self.ds.get_sum_by_student('john0001')
 
-        self.assertEqual( points.attendance, 12)
+        self.assertEqual( points.attendance, self.lesson_count)
         self.assertEqual( points.absence, 0)
-        self.assertEqual( points.handins, 12)
+        self.assertEqual( points.handins, self.lesson_count)
         self.assertEqual( points.extra, 3)
 
 class test_datastore_queries_extra_points(unittest.TestCase):
