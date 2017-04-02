@@ -109,16 +109,11 @@ class Datastore(object):
     def add_lesson_points(self, lesson_points):
         ''' add or update lesson points
         '''
-
         sps = self._get_lesson_points(
                             lesson_id=lesson_points.lesson_id,
                             student_id=lesson_points.student_id,
                             )
-#        print "add_lesson_points", sps
-
         if sps.count() < 1:
-
-            #print __name__, "adding, not updating"
             sp = Lesson_points(lesson_id=lesson_points.lesson_id,
                                 student_id=lesson_points.student_id,
                                 attendance=lesson_points.attendance,
@@ -127,12 +122,11 @@ class Datastore(object):
                                 )
 
             self.session.add(sp)
+        else:
+            sps[0].attendance = lesson_points.attendance
+            sps[0].handin = lesson_points.handin
+            sps[0].absence = lesson_points.absence
 
-        # self.session.update().values(
-        #     name=select([addresses.c.email_address]).\
-        #             where(addresses.c.user_id==users.c.id).\
-        #             as_scalar()
-        #             )
         self.session.commit()
 
     def _get_lesson_points( self, lesson_id=None, student_id=None):
