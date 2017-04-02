@@ -133,7 +133,7 @@ class test_datastore_basic(unittest.TestCase):
         self.assertEqual( s.absence, False )
         self.assertEqual( s.handin, True )
 
-    def testAddLesson( self ):
+    def testAddLessonPoints( self ):
         ses = lesson_record( lesson_name, lesson_date )
         stud = student_record( student_id, student_name)
         sp = lesson_points_record( lesson_date, student_id, True, False, True )
