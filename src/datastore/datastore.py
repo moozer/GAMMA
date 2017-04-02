@@ -93,11 +93,21 @@ class Datastore(object):
 
     @db_guard
     def add_lesson(self, lesson):
+        ''' add a lesson or a list of lessons
+        '''
+        if isinstance( lesson, list ):
+            for l in lesson:
+                self._add_lesson( l )
+                self.autofill_stud_to_lesson(lesson_id=l.date)
+        else:
+            self._add_lesson( lesson )
+            self.autofill_stud_to_lesson(lesson_id=lesson.date)
+
+    def _add_lesson( self, lesson ):
         u = Lesson(date=lesson.date,
                     name=lesson.name)
         self.session.add(u)
 
-        self.autofill_stud_to_lesson(lesson_id=lesson.date)
 
     def get_lessons_list(self):
         return self.session.query(
@@ -160,8 +170,6 @@ class Datastore(object):
         #                 Lesson_points.student_id == student_id)
 
         sps = self._get_lesson_points( student_id=student_id)
-
-        print sps
 
         ret = []
         for sp in sps:
