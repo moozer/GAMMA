@@ -95,9 +95,11 @@ class Datastore(object):
     def add_lesson(self, lesson):
         ''' add a lesson or a list of lessons
         '''
+        print "XX", lesson
         if isinstance( lesson, list ):
             for l in lesson:
                 self._add_lesson( l )
+                print "XX", l.date
                 self.autofill_stud_to_lesson(lesson_id=l.date)
         else:
             self._add_lesson( lesson )
@@ -116,9 +118,19 @@ class Datastore(object):
                         ).order_by(asc(Lesson.date))
 
     # --- lesson_points ----
+    @db_guard
     def add_lesson_points(self, lesson_points):
-        ''' add or update lesson points
+        ''' add or update lesson points (single or a list)
         '''
+        if isinstance( lesson_points, list ):
+            with self.session.no_autoflush:
+                for l in lesson_points:
+                    self._add_lesson_points( l )
+        else:
+            self._add_lesson_points( lesson_points )
+
+
+    def _add_lesson_points(self, lesson_points):
         sps = self._get_lesson_points(
                             lesson_id=lesson_points.lesson_id,
                             student_id=lesson_points.student_id,
@@ -136,8 +148,6 @@ class Datastore(object):
             sps[0].attendance = lesson_points.attendance
             sps[0].handin = lesson_points.handin
             sps[0].absence = lesson_points.absence
-
-        self.session.commit()
 
     def _get_lesson_points( self, lesson_id=None, student_id=None):
         if lesson_id and student_id:

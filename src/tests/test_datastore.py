@@ -28,14 +28,28 @@ def init_db( ds ):
     for i in range( 0,student_count ):
         ds.add_student( student_record( 'john%04d'%(i, ), "John %d"%(i,) ) )
 
-    for i in range( 0,lessons_count ):
-        ds.add_lesson( lesson_record( 'LearningLesson%04d'%(i, ), date( 2017, 02, i+1) ) )
+    print "init_db: students", ds.get_student_ids()
 
+    lesson_list = []
+    for i in range( 0,lessons_count ):
+        lesson_list.append(lesson_record(
+                            'LearningLesson%04d'%(i, ),
+                            date( 2017, 02, i+1) ) )
+
+    ds.add_lesson(lesson_list )
+    print "init_db: lessons"
+    for l in ds.get_lessons_list():
+        print "-", l.date
+
+    lesson_points_list=[]
     for user_i in range( 0,student_count ):
         for lesson_i in range( 0,lessons_count ):
-            ds.add_lesson_points(
-                lesson_points_record( date( 2017, 02, lesson_i+1), 'john%04d'%(user_i, ),
-                                        True, False, True ) )
+            lesson_points_list.append(
+                lesson_points_record(
+                            date( 2017, 02, lesson_i+1),
+                            'john%04d'%(user_i, ),
+                            True, False, True ))
+    ds.add_lesson_points( lesson_points_list )
 
     for user_i in range( student_count ):
         for ep_i in range( extra_points_count ):
@@ -178,6 +192,23 @@ class test_datastore_basic(unittest.TestCase):
         db_stud = ds.get_lesson_points_by_stud( student_id )
         self.assertEqual( sp, db_stud[0] )
 
+    def testAddultipleLessonPoints( self ):
+        ses = lesson_record( lesson_name, lesson_date )
+        stud = student_record( student_id, student_name)
+        stud2 = student_record( student_id+'2', student_name+'2')
+        sp = lesson_points_record( lesson_date, student_id, True, False, True )
+        sp2 = lesson_points_record( lesson_date, student_id+'2', True, False, True )
+
+        ds = Datastore()
+
+        # note: stud not existing when lesson is added
+        ds.add_lesson( ses )
+        ds.add_student( stud )
+        ds.add_student( stud2 )
+        ds.add_lesson_points( [sp, sp2] )
+
+        db_ses = ds.get_lesson_points_by_lesson( lesson_date )
+        self.assertEqual( sp2, db_ses[1] )
 
 
     def testUpdateLessonPoints( self ):
