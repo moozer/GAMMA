@@ -1,5 +1,5 @@
 from datastore import Base
-from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, UniqueConstraint
 import collections
 
 from student import Student
@@ -15,6 +15,8 @@ class Lesson_points(Base):
     attendance = Column(Boolean)
     absence = Column(Boolean)
     handin = Column(Boolean)
+    __table_args__ = (UniqueConstraint('lesson_id', 'student_id', name='no_dupes'),
+                     )
 
 lesson_points_record = collections.namedtuple(
         'lesson_points_record',
