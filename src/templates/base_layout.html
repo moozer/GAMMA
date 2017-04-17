@@ -9,12 +9,12 @@
 		<meta name="description" content="Great Attendance Monitoring and Measuring of Activity system">
 
 		<!-- Stylesheets -->
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fonts/fontello/css/fontello.css') }}">
 
 		<!-- JavaScript -->
-		<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.2.0.min.js') }}"></script>
-		<script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.0.min.js') }}"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}"></script>
 		{% endblock %}
 	</head>
 
@@ -26,15 +26,15 @@
 			{% block header %}
 			<div class="pagewidth">
 				<div class="logo">
-					<h1 id="site-title"><a href="/" title="Home">Gamma</a></h1>
+					<h1 id="site-title"><a href="/" title="Home">GAMMA</a></h1>
 					<h2 id="site-description">Great Attendance Monitoring and Measuring of Activity system</h2>
 				</div>
 				<div class="metanav">
 					{% if not session.logged_in %}
-					<a href="{{ url_for('login') }}">log in</a>
+					<a class="login" href="{{ url_for('login') }}">Log In</a>
 					{% else %}
-					<span>Hi {{session.userid}}</span>
-					<a href="{{ url_for('logout') }}">log out</a>
+						<!-- User Menu -->
+						{% include "includes/user_menu.html" %}
 					{% endif %}
 				</div>
 			</div>
@@ -54,7 +54,8 @@
 		<footer>
 			<div class="pagewidth">
 				{% block footer %}
-				<p>Gamma on <a href="https://github.com/moozer/GAMMA" title="Gamma">GitHub</a></p>
+				<p>GAMMA on <a href="https://github.com/moozer/GAMMA" title="GAMMA"><span class="icon-github-circled">GitHub</span></a></p>
+				<span class="scroll-top">Scroll <span class="icon-angle-up"></span></span>
 				{% endblock %}
 			</div>
 		</footer>
@@ -63,6 +64,6 @@
 	</body>
 
 	<!-- User Messages -->
-	{% include "messages.html" %}
+	{% include "includes/messages.html" %}
 
 </html>

@@ -37,6 +37,7 @@ table{border-collapse:collapse;border-spacing:0}
 *****************/
 * {
 	box-sizing: border-box;
+	outline: none;
 }
 
 /* html/body
@@ -139,8 +140,8 @@ ul li {
 /* Abel */
 @font-face {
     font-family: Abel;
-    src: url('fonts/abel/abel-regular-webfont.woff2') format('woff2'),
-         url('fonts/abel/dabel-regular-webfont.woff') format('woff');
+    src: url('../fonts/abel/abel-regular-webfont.woff2') format('woff2'),
+         url('../fonts/abel/abel-regular-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 
@@ -154,7 +155,7 @@ ul li {
 header {
 	background: #006E79;
 	color: #fff;
-	padding: .35em 0;
+	padding: .75em 0;
 }
 header a {
 	color: #fff;
@@ -170,7 +171,7 @@ header a {
 *****************/
 .logo {
 		float: left;
-		padding: .15em 0;
+		padding: .2em 0;
 }
 
 /* Site Title */
@@ -204,46 +205,104 @@ header a {
 	padding: 0 0 0 1em;
 	float: right;
 }
-.metanav a {
+.metanav .login {
 	text-decoration: none;
 	color: #fff;
 	text-transform: uppercase;
 	display: inline-block;
 	padding: .75em 1.5em;
 	margin: 0 0 0 1em;
-	font-size: .75em;
+	font-size: .8125em;
 	font-weight: bold;
 	line-height: 1em;
 	border: 2px solid #fff;
 	border-radius: 3px;
 }
-.metanav a:hover {
+.metanav .login:hover {
 	color: #006E79;
 	background: #fff;
 }
-/* Login "Hi User" message */
-.metanav span {
+
+.user-menu .menu {
 	display: inline-block;
+	border-radius: 5px;
+	padding: .45em .5em .45em .8em;
+	background: rgba(0,70,76,.8);
+}
+.user-menu {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+}
+.user-menu ul {
+	display: none;
+	position: absolute;
+	top: 100%;
+	right: 0;
+	z-index: 999;
+	background: rgba(0,70,76,.8);
+	margin: 0;
+	padding: 1em;
+	width: 150px;
+	border-radius: 5px 0 5px 5px;
+}
+.user-menu ul li {
+	margin: 0;
+	padding: .25em 0;
+}
+.user-menu:hover .menu {
+	border-radius: 5px 5px 0 0;
+	color: #fff;
+}
+.user-menu:hover ul {
+	display: block;
+	color: #fff
+}
+.user-menu:hover ul a {
+	color: #fff
 }
 
 /* Flash Messages
 *****************/
+.message-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(255,255,255,.6);
+	z-index: 99;
+}
 .message {
 	position: absolute;
 	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	left: 0;
+	transform: translateY(-50%);
+	width: 100%;
 	z-index: 999;
 	text-align: center;
 	padding: 2em 4em;
-	font-size: 1em;
+	font-size: 1.25em;
 	background: rgba(255,255,0,.3);
-	border-radius: 10px;
-	border: 1px solid rgba(255,255,0,.2);
+	border-width: 5px 0;
 	box-shadow: 0 0 5px 0 rgba(0,0,0,.05);
-	/* Fade Out after 3 seconds
-	animation: fadeOut .5s linear 3s 1;
-	animation-fill-mode: both; */
+}
+.message-close {
+	position: absolute;
+	top: .6em;
+	right: .5em;
+	color: rgba(0,0,0,.5);
+	display: block;
+	line-height: 1em;
+	cursor: pointer;
+	padding: .2em;
+	box-sizing: initial;
+	cursor: pointer;
+}
+.message-close:hover {
+	color: #000;
+	font-size:1.025em;
+	transform: rotate(90deg);
 }
 
 /* Main/Content
@@ -253,15 +312,41 @@ main {
 	margin: 1em 0;
 }
 
+/* Graph */
+.graph {
+	max-height: 500px;
+	width: 100%;
+}
+
 /* Footer
 *****************/
 footer {
+	font-size: .875em;
 	position: fixed;
 	bottom: 0;
 	left: 0;
 	width: 100%;
 	padding: .5em 0;
 	border-top: 1px solid rgba(0,0,0,.1);
+	background: #fff;
+}
+
+footer p {
+	float: left;
+}
+
+.scroll-top {
+	visibility: hidden;
+	opacity: 0;
+	float: right;
+	cursor: pointer;
+}
+.scroll .scroll-top {
+	visibility: visible;
+	opacity: 1;
+}
+.scroll .scroll-top:hover {
+	animation: jiggle linear .25s infinite alternate;
 }
 
 /*****************
@@ -280,6 +365,7 @@ footer {
 
 /* Animations
 *****************/
+/* .1 secons */
 .metanav a {
 	-webkit-transition: all .1s ease-in;
     -moz-transition: all .1s ease-in;
@@ -287,17 +373,21 @@ footer {
     transition: all .1s ease-in;
 }
 
+/* .25 secons */
+.message-close,
+.scroll-top {
+	-webkit-transition: all .25s ease-in;
+    -moz-transition: all .25s ease-in;
+    -o-transition: all .25s ease-in;
+    transition: all .25s ease-in;
+}
+
 /* Keyframes
 *****************/
-@keyframes fadeOut {
-	to {
-		opacity: 0;
-		visibility: hidden;
-		text-indent: -999em;
-		color: transparent;
-		height: 0;
-		padding: 0;
-	}
+@keyframes jiggle {
+	0% { transform: translateY(-1px); }
+	50% { transform: translateY(0)}
+	100% { transform: translateY(1px); }
 }
 
 /*****************
@@ -307,3 +397,4 @@ footer {
 	.pagewidth {
 		max-width: 94%;
 	}
+}

@@ -1,7 +1,7 @@
 {% extends "base_layout.html" %}
 
 	{% block main %}
-	<h3>Overview of lessons</h3>
+	<h3>Overview of sessions</h3>
 	<table>
 		<thead>
 			<tr>
@@ -11,11 +11,11 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% for s in lessons %}
+			{% for s in sessions %}
 			<tr>
 				<td>{{ s.date }}</td>
 				<td>{{ s.name }}</td>
-				<td><a href="/lessons/{{s.date}}">details</a></td>
+				<td><a href="/sessions/{{s.date}}">details</a></td>
 			</tr>
 			{% endfor %}
 		</tbody>

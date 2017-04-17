@@ -1,0 +1,8 @@
+{% for message in get_flashed_messages() %}
+	<div class="message-container">
+		<div class="message">
+			{{ message }}
+			<span class="message-close icon-cancel"></span>
+		</div>
+	</div>
+{% endfor %}
