@@ -1,15 +1,21 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+
+Base = declarative_base()
 
 from student import *
-from session import *
-from session_points import *
+from lesson import *
+from lesson_points import *
 from extra_points import *
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import desc, asc
 
-Base = declarative_base()
+student_points_record = collections.namedtuple(
+                            'student_points_record',
+                            ['attendance', 'handins', 'absence', 'extra'])
+
 
 
 class Datastore(object):
@@ -22,12 +28,27 @@ class Datastore(object):
         DatastoreSessionMaker = sessionmaker(bind=engine)
         self.session = DatastoreSessionMaker()
 
+    # --- sql related decorators -----
+    def db_guard(func):
+        ''' handles commit on success and roolback om error
+        '''
+        def func_wrapper(self, *args, **kwargs):
+            try:
+                func(self, *args, **kwargs)
+                self.session.commit()
+            except SQLAlchemyError:
+                self.session.rollback()
+                raise
+
+        return func_wrapper
+
     # --- students ----
+    @db_guard
     def add_student(self, student):
         u = Student(student_id=student.id,
                     name=student.name)
+
         self.session.add(u)
-        self.session.commit()
 
     def get_student(self, student_id):
         s = self.session.query(Student).filter(
@@ -43,56 +64,66 @@ class Datastore(object):
             ids.append(stud.student_id)
         return ids
 
-    # --- sessions ----
-    def get_session(self, id, id_type="Date"):
-        return self.get_session_by_date(id)
+    def get_sum_by_student(self, student_id ):
+       lesson_points_list = self.get_lesson_points_by_stud(student_id)
+       extra_points_list = self.get_extra_points_by_student(student_id)
 
-    def get_session_by_date(self, session_date):
-        s = self.session.query(Session).filter(
-                    Session.date == session_date
+       return student_points_record(
+            attendance=sum( 1 for entry in lesson_points_list if entry.attendance),
+            handins=sum( 1 for entry in lesson_points_list if entry.handin),
+            absence=sum( 1 for entry in lesson_points_list if entry.absence),
+            extra=sum( ep.points for ep in extra_points_list ) )
+
+    # --- lessons ----
+    def get_lesson(self, id, id_type="Date"):
+        return self.get_lesson_by_date(id)
+
+    def get_lesson_by_date(self, lesson_date):
+        s = self.session.query(Lesson).filter(
+                    Lesson.date == lesson_date
                     ).first()
-        return session_record(s.name, s.date)
+        return lesson_record(s.name, s.date)
 
-    def add_session(self, session):
-        u = Session(date=session.date,
-                    name=session.name)
+    @db_guard
+    def add_lesson(self, lesson):
+        u = Lesson(date=lesson.date,
+                    name=lesson.name)
         self.session.add(u)
-        self.session.commit()
 
-    def get_sessions_list(self):
+    def get_lessons_list(self):
         return self.session.query(
-                        Session.date,
-                        Session.name
-                        ).order_by(asc(Session.date))
+                        Lesson.date,
+                        Lesson.name
+                        ).order_by(asc(Lesson.date))
 
-    # --- session_points ----
-    def add_session_points(self, session_points):
-        sp = Session_points(session_id=session_points.session_id,
-                            student_id=session_points.student_id,
-                            attendance=session_points.attendance,
-                            absence=session_points.absence,
-                            handin=session_points.handin
+    # --- lesson_points ----
+    def add_lesson_points(self, lesson_points):
+        sp = Lesson_points(lesson_id=lesson_points.lesson_id,
+                            student_id=lesson_points.student_id,
+                            attendance=lesson_points.attendance,
+                            absence=lesson_points.absence,
+                            handin=lesson_points.handin
                             )
         self.session.add(sp)
         self.session.commit()
 
-    def get_session_points_by_session(self, session_id):
-        sps = self.session.query(Session_points).filter(
-                        Session_points.session_id == session_id)
+    def get_lesson_points_by_lesson(self, lesson_id):
+        sps = self.session.query(Lesson_points).filter(
+                        Lesson_points.lesson_id == lesson_id)
         ret = []
         for sp in sps:
-            ret.append(session_points_record(
-                        sp.session_id, sp.student_id,
+            ret.append(lesson_points_record(
+                        sp.lesson_id, sp.student_id,
                         sp.attendance, sp.absence, sp.handin))
         return ret
 
-    def get_session_points_by_stud(self, student_id):
-        sps = self.session.query(Session_points).filter(
-                        Session_points.student_id == student_id)
+    def get_lesson_points_by_stud(self, student_id):
+        sps = self.session.query(Lesson_points).filter(
+                        Lesson_points.student_id == student_id)
         ret = []
         for sp in sps:
-            ret.append(session_points_record(
-                         sp.session_id, sp.student_id,
+            ret.append(lesson_points_record(
+                         sp.lesson_id, sp.student_id,
                          sp.attendance, sp.absence, sp.handin))
         return ret
 

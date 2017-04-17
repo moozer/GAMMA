@@ -3,11 +3,11 @@ from sqlalchemy import Column, Integer, String, Date
 import collections
 
 
-class Session(Base):
-    __tablename__ = 'sessions'
+class Lesson(Base):
+    __tablename__ = 'lessons'
 
     id = Column(Integer, primary_key=True)
-    date = Column(Date)
+    date = Column(Date, unique=True)
     name = Column(String)
 
-session_record = collections.namedtuple('session_record', ['name', 'date'])
+lesson_record = collections.namedtuple('lesson_record', ['name', 'date'])
