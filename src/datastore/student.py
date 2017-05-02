@@ -4,10 +4,10 @@ import collections
 
 
 class Student(Base):
-    __tablename__ = 'students'
+	__tablename__ = 'students'
 
-    id = Column(Integer, primary_key=True)
-    student_id = Column(String, unique=True)
-    name = Column(String)
+	id = Column(Integer, primary_key=True)
+	student_id = Column(String, unique=True)
+	name = Column(String)
 
 student_record = collections.namedtuple('student_record', ['id', 'name'])

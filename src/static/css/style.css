@@ -87,6 +87,20 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 	color: inherit;
 }
 
+/* Horizonta Rule
+*****************/
+hr {
+	border: none;
+	background: rgba(0,0,0,.3);
+	height: 1px;
+}
+
+/* Bold Text
+*****************/
+strong {
+	font-weight: bold;
+}
+
 /* Table
 *****************/
 table {
@@ -105,16 +119,21 @@ table tr:nth-of-type(2n+0) {
 	background: rgba(0,0,0,.05);
 }
 
-/* Input
+table.grid3 td:first-of-type {
+	width: 70%;
+}
+
+/* Forms
 *****************/
 input {
 	border: 1px solid rgba(0,0,0,.2);
 	padding: .5em 1em;
 	margin: .5em 0;
+	display: block;
 }
 /* Submit Button */
 input[type='submit'] {
-	background: #006E79;
+	background: rgba(0,110,121,.8);
 	color: #fff;
 	padding: 1em 1.5em;
 	margin: 1em 0;
@@ -124,6 +143,20 @@ input[type='submit'] {
 	border: none;
 	border-radius: 3px;
 	cursor: pointer;
+}
+input[type='submit']:hover {
+	background: rgba(0,110,121,1);
+	transform: scale(1.025);
+	box-shadow: 0 2px 3px 0 rgba(0,0,0,.15);
+}
+
+/* Form Errors */
+.form-error {
+	font-size: .75em;
+	color: #f00;
+	padding: 0;
+	line-height: 1em;
+	margin: .25em 0;
 }
 
 /* Lists
@@ -139,11 +172,11 @@ ul li {
 
 /* Abel */
 @font-face {
-    font-family: Abel;
-    src: url('../fonts/abel/abel-regular-webfont.woff2') format('woff2'),
-         url('../fonts/abel/abel-regular-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+	font-family: Abel;
+	src: url('../fonts/abel/abel-regular-webfont.woff2') format('woff2'),
+ 	url('../fonts/abel/abel-regular-webfont.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
 
 }
 
@@ -210,7 +243,7 @@ header a {
 	color: #fff;
 	text-transform: uppercase;
 	display: inline-block;
-	padding: .75em 1.5em;
+	padding: .6em 1.5em;
 	margin: 0 0 0 1em;
 	font-size: .8125em;
 	font-weight: bold;
@@ -223,6 +256,7 @@ header a {
 	background: #fff;
 }
 
+/* User Menu */
 .user-menu .menu {
 	display: inline-block;
 	border-radius: 5px;
@@ -250,11 +284,13 @@ header a {
 	margin: 0;
 	padding: .25em 0;
 }
-.user-menu:hover .menu {
+.user-menu:hover .menu,
+.user-menu.clicked .menu {
 	border-radius: 5px 5px 0 0;
 	color: #fff;
 }
-.user-menu:hover ul {
+.user-menu:hover ul,
+.user-menu.clicked ul {
 	display: block;
 	color: #fff
 }
@@ -265,31 +301,31 @@ header a {
 /* Flash Messages
 *****************/
 .message-container {
-	position: absolute;
-	top: 0;
+	position: fixed;
+	bottom: 2em;
 	left: 0;
 	width: 100%;
-	height: 100%;
-	background: rgba(255,255,255,.6);
+	height: auto;
+	background: rgba(255,255,255,.25);
 	z-index: 99;
 }
 .message {
-	position: absolute;
-	top: 50%;
-	left: 0;
-	transform: translateY(-50%);
 	width: 100%;
 	z-index: 999;
 	text-align: center;
-	padding: 2em 4em;
-	font-size: 1.25em;
-	background: rgba(255,255,0,.3);
+	padding: .5em;
+	font-size: 1em;
+	background: rgba(0,255,0,.7);
 	border-width: 5px 0;
 	box-shadow: 0 0 5px 0 rgba(0,0,0,.05);
 }
+.message.error {
+	background: rgba(255,0,0,.7);
+	color: #fff;
+}
 .message-close {
 	position: absolute;
-	top: .6em;
+	top: 50%;
 	right: .5em;
 	color: rgba(0,0,0,.5);
 	display: block;
@@ -298,24 +334,53 @@ header a {
 	padding: .2em;
 	box-sizing: initial;
 	cursor: pointer;
+	transform: translateY(-50%);
 }
 .message-close:hover {
 	color: #000;
 	font-size:1.025em;
-	transform: rotate(90deg);
+	transform: translateY(-50%) rotate(90deg);
+}
+.message.error .message-close {
+	color: rgba(255,255,255,.5);
+}
+.message.error .message-close:hover {
+	color: #fff;
 }
 
 /* Main/Content
 *****************/
 main {
-	padding: 0;
-	margin: 1em 0;
+	padding: 1em 0;
+	margin: 0;
 }
 
 /* Graph */
+.graph-container {
+	padding: .25em .5em;
+	background: rgba(0,110,121,.2);
+	color: #333;
+	margin: .5em 0;
+	border-radius: 5px;
+}
+.graph-container:before {
+	font-family: "fontello";
+	content: 'Hide \e80a';
+	font-size: .8125em;
+	line-height: 1em;
+	padding: .5em;
+	margin: 0;
+	display: block;
+	cursor: pointer;
+}
+.graph-container.show:before {
+	content: 'Show \e80a';
+}
 .graph {
 	max-height: 500px;
 	width: 100%;
+	border-radius: 5px;
+	margin-top: .25em;
 }
 
 /* Footer
@@ -364,29 +429,28 @@ footer p {
 }
 
 /* Animations
-*****************/
 /* .1 secons */
-.metanav a {
+.metanav a,
+.message-close,
+input[type='submit'] {
 	-webkit-transition: all .1s ease-in;
-    -moz-transition: all .1s ease-in;
-    -o-transition: all .1s ease-in;
-    transition: all .1s ease-in;
+	-moz-transition: all .1s ease-in;
+	-o-transition: all .1s ease-in;
+	transition: all .1s ease-in;
 }
 
 /* .25 secons */
-.message-close,
 .scroll-top {
 	-webkit-transition: all .25s ease-in;
-    -moz-transition: all .25s ease-in;
-    -o-transition: all .25s ease-in;
-    transition: all .25s ease-in;
+	-moz-transition: all .25s ease-in;
+	-o-transition: all .25s ease-in;
+	transition: all .25s ease-in;
 }
 
 /* Keyframes
 *****************/
 @keyframes jiggle {
 	0% { transform: translateY(-1px); }
-	50% { transform: translateY(0)}
 	100% { transform: translateY(1px); }
 }
 
@@ -396,5 +460,21 @@ footer p {
 @media screen and (max-width:1160px) {
 	.pagewidth {
 		max-width: 94%;
+	}
+}
+
+@media screen and (max-width:760px) {
+	body {
+		font-size: .9em;
+	}
+
+	#site-description {
+		display: none;
+	}
+}
+
+@media screen and (max-width:560px) {
+	table.grid3 td:first-of-type {
+		width: auto;
 	}
 }

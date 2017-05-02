@@ -1,136 +1,183 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash
-
-from datastore.datastore import Datastore
-from datastore.student import student_record
-from datastore.session import session_record
-from datastore.session_points import session_points_record
+	render_template, flash
 
 from datetime import date, datetime
+from datastore import *
+
+# Charts
 import pygal
+from pygal.style import BlueStyle
+
+# Forms
+from admin import forms
+
 
 app = Flask(__name__)
 ds = Datastore()
 
 # might need improving...
-def login_user( user, passwd ):
-    return user
-
-def get_points_per_user( userid ):
-    return {'absence': 1, 'attendance': 10, 'handins': 6, 'extra': 5, 'sum': 20 }
-
-def get_points_list_per_user( userid ):
-    absence =   [   { "date": "20170302", "session": "ITT1 SD" }]
-    attendance = [  { "date": "20170302", "session": "ITT1 SD", "sessionid": 23 },
-                    { "date": "20170102", "session": "ITT1 SD", "sessionid": 24 },
-                    { "date": "20170109", "session": "ITT1 SD", "sessionid": 25 },
-                    { "date": "20170116", "session": "ITT1 SD", "sessionid": 26 },
-                    { "date": "20170123", "session": "ITT1 SD", "sessionid": 27 },
-                    { "date": "20170130", "session": "ITT1 SD", "sessionid": 28 },
-                    { "date": "20170207", "session": "ITT1 SD", "sessionid": 29 },
-                    { "date": "20170214", "session": "ITT1 SD", "sessionid": 20 },
-                    { "date": "20170221", "session": "ITT1 SD", "sessionid": 21 } ]
-    handins = [     { "date": "20170302", "session": "ITT1 SD", "sessionid": 23 },
-                    { "date": "20170102", "session": "ITT1 SD", "sessionid": 24 },
-                    { "date": "20170109", "session": "ITT1 SD", "sessionid": 25 },
-                    { "date": "20170116", "session": "ITT1 SD", "sessionid": 26 },
-                    { "date": "20170123", "session": "ITT1 SD", "sessionid": 27 },
-                    { "date": "20170130", "session": "ITT1 SD", "sessionid": 28 } ]
-    extra = [       { "date": "20170202",
-                        "reason": "Awarded by class because of awesomeness", "points": 2},
-                    { "date": "20170202",
-                        "reason": "Participated in some event", "points": 1},
-                    { "date": "20170202",
-                        "reason": "Did something else that was awesome", "points": 2}  ]
-    return { 'absence': absence, "attendance": attendance,
-            "handins": handins, "extra": extra}
-
+test_user = 'john0000'
+test_password = 'gamma'
+def check_credentials( user, passwd ):
+	if user == test_user and passwd == test_password:
+		return True
 
 @app.route('/')
 def index():
-	graph = pygal.Line()
-	graph.title = '% Change Coolness of programming languages over time.'
-	graph.x_labels = ['2011','2012','2013','2014','2015','2016']
-	graph.add('Python',  [15, 31, 89, 200, 356, 900])
-	graph.add('Java',    [15, 45, 76, 80,  91,  95])
-	graph.add('C++',     [5,  51, 54, 102, 150, 201])
-	graph.add('All others combined!',  [5, 15, 21, 55, 92, 105])
-	graph_data = graph.render_data_uri()
-	return render_template("index.html", graph_data = graph_data)
+	title = 'Home'
+	return render_template("index.html",
+							title = title
+							)
 
 ## --------- admin pages -----------------
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
-    error = None
-    if request.method == 'POST':
-        userid = login_user( request.form['username'], request.form['password'] )
-        if not userid:
-            error = 'Permission denied, credentials rejected'
-        else:
-            session['userid'] = userid
-            session['logged_in'] = True
-            flash('You were logged in')
-            return redirect(url_for('index'))
-    return render_template('page_login.html', error=error)
+	title = 'Login'
+	form = forms.LoginForm()
+	if request.method == 'POST':
+		if form.validate_on_submit():
+			registered_user = check_credentials( form.username.data, form.password.data )
+			if not registered_user:
+				flash('Permission denied, credentials rejected', 'error')
+			else:
+				session['userid'] = form.username.data
+				session['logged_in'] = True
+				flash('You were logged in', 'success')
+				return redirect(url_for('index'))
+		else:
+			flash('Please fill in required fields.', 'error')
+
+	return render_template('page_login.html',
+							title = title,
+							form = form,
+							test_user = test_user,
+							test_password = test_password
+							)
 
 
-@app.route('/logout')
+@app.route('/logout/')
 def logout():
-    session.pop('logged_in', None)
-    flash('You were logged out')
-    return redirect(url_for('index'))
+	session.pop('logged_in', None)
+	flash('You were logged out', 'success')
+	return redirect(url_for('index'))
 
 ## --------- points pages -----------------
-@app.route('/points')
+@app.route('/points/')
 @app.route('/points/<studentid>')
 def points( studentid=None ):
-    if not studentid:
-        students = ds.get_student_ids()
-        points_list = []
-        for s in students:
-            points_list.append( { "id": s, "name": ds.get_student(s).name,
-                                "points": get_points_per_user(s) } )
+	title = 'Student Points'
+	if studentid and ds.check_user(studentid):
+		name = ds.get_student(studentid).name
+		lesson_points_list = ds.get_lesson_points_by_stud( studentid )
+		extra_points_list = ds.get_extra_points_by_student( studentid )
+		lessons = []
+		for l in lesson_points_list:
+			lessons.append({ 'lessons': ds.get_lesson(l.lesson_id) })
+			# more is needed - hand-ins and absence lists
 
-        return render_template('page_points_overview.html', points_list=points_list)
-    else:
-        name = ds.get_student(studentid).name
-        points_list = get_points_list_per_user( studentid )
+		return render_template('page_points_student.html',
+								studname=name,
+								lessons=lessons,
+								extra_points_list=extra_points_list,
+								title = title
+								)
+	else:
+		# Show error if a wrong user is supplied
+		if studentid and not ds.check_user(studentid):
+			flash('User not found', 'error')
 
-        return render_template('page_points_student.html', studname=name, points_list=points_list)
+		students = ds.get_student_ids()
+		points_list = []
+		for s in students:
+			points_list.append( { "id": s, "name": ds.get_student(s).name,
+								"points": ds.get_sum_by_student(s),
+								'sum': ds.get_sum_by_student(s).attendance +
+										ds.get_sum_by_student(s).handins +
+										ds.get_sum_by_student(s).extra -
+										ds.get_sum_by_student(s).absence} )
+		# Build Chart
+		graph = pygal.Bar(style=BlueStyle)
+		graph.title = 'Student Points'
+		graph.x_labels = [student['name'] for student in points_list]
+		graph.add('Attendance',
+					[student['points'][0] for student in points_list])
+		graph.add('Handins',
+					[student['points'][1] for student in points_list])
+		graph.add('Absence',
+					[student['points'][2] for student in points_list])
+		graph.add('Extra Points',
+					[student['points'][3] for student in points_list])
+		graph.add('Total Points',
+					[student['sum'] for student in points_list])
+		graph_data = graph.render_data_uri()
+
+		return render_template('page_points_overview.html',
+								graph_data = graph_data,
+								points_list = points_list,
+								title = title
+								)
 
 ## --------- points pages -----------------
 # TODO: we want this:
-#       https://stackoverflow.com/questions/31669864/date-in-flask-url
-@app.route('/sessions')
-@app.route('/sessions/<session_date_str>')
-def sessions( session_date_str=None ):
-    if not session_date_str:
-        sessions = ds.get_sessions_list()
-        return render_template('page_sessions_overview.html', sessions = sessions)
-    else:
-        session_date = datetime.strptime(session_date_str, "%Y-%m-%d").date()
-        s = ds.get_session( session_date )
-        sp = ds.get_session_points_by_session( session_date )
-        return render_template('page_sessions_detailed.html', session=s, points=sp )
+#	https://stackoverflow.com/questions/31669864/date-in-flask-url
+@app.route('/lessons/')
+@app.route('/lessons/<lesson_date_str>')
+def lessons( lesson_date_str=None ):
+	title = 'Lessons'
+	if not lesson_date_str:
+		lessons = ds.get_lessons_list()
+		return render_template('page_lessons_overview.html',
+								lessons = lessons,
+								title = title
+								)
+	else:
+		lesson_date = datetime.strptime(lesson_date_str, "%Y-%m-%d").date()
+		s = ds.get_lesson_by_date( lesson_date )
+		sp = ds.get_lesson_points_by_lesson( lesson_date )
+		title = 'Lesson ' + s.name +' Details'
+		return render_template('page_lessons_detailed.html',
+								lesson=s,
+								points=sp,
+								title = title
+								)
+
+@app.errorhandler(404)
+def page_not_found(e):
+	title = 'Page Not Found'
+	return render_template('page_404.html',
+							title = title
+							), 404
 
 def init_db( ds ):
-    student_count = 10
-    sessions_count = 12
+	student_count = 10
+	lessons_count = 12
+	extra_points_count = 3
 
-    for i in range( 0,student_count ):
-        ds.add_student( student_record( 'john%04d'%(i, ), "John %d"%(i,) ) )
+	for i in range( 0,student_count ):
+		ds.add_student( student_record( 'john%04d'%(i, ), "John %d"%(i,) ) )
 
-    for i in range( 0,sessions_count ):
-        ds.add_session( session_record( 'LearningSession%04d'%(i, ), date( 2017, 02, i+1) ) )
+	for i in range( 0,lessons_count ):
+		ds.add_lesson( lesson_record( 'LearningSession%04d'%(i, ), date( 2017, 02, i+1) ) )
 
-    for user_i in range( 0,student_count ):
-        for session_i in range( 0,sessions_count ):
-            ds.add_session_points(
-                session_points_record( date( 2017, 02, session_i+1), 'john%04d'%(user_i, ),
-                                        True, False, True ) )
+	for user_i in range( 0,student_count ):
+		for lesson_i in range( 0,lessons_count ):
+			ds.add_lesson_points(
+				lesson_points_record( date( 2017, 02, lesson_i+1), 'john%04d'%(user_i, ),
+										True, False, True ) )
+
+	for user_i in range( student_count ):
+		for ep_i in range( extra_points_count ):
+			ds.add_extra_points(
+					extra_points_record(
+						date( 2017, 02, ep_i+1),
+						student_id='john%04d'%(user_i, ),
+						points=1,
+						reason="Some valid reason #%d" % (user_i+ep_i, )
+						))
+
 
 if __name__ == "__main__":
-    app.secret_key = 'super secret key'
+	app.secret_key = 'super secret key'
 
-    init_db( ds )
-    app.run(debug=False)
+	init_db( ds )
+	app.run(debug=False)

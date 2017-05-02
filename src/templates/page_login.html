@@ -1,15 +1,33 @@
 {% extends "base_layout.html" %}
 
 	{% block main %}
-	<h3>Login</h3>
-	{% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+	<h1 class="page-title">{{ title }}</h1>
+
 		<form action="{{ url_for('login') }}" method="post">
-			<dl>
-				<dt>Username:
-				<dd><input type="text" name="username"></dd>
-				<dt>Password:</dt>
-				<dd><input type="password" name="password"></dd>
-				<dd><input type="submit" value="Log In"></dd>
-			</dl>
+			{{ form.csrf_token }}
+
+			<p>Username</p>
+			{{ form.username }}
+			{% for error in form.username.errors %}
+				<p class="form-error">{{ error }}</p>
+			{% endfor %}
+
+			<p>Password</p>
+			{{ form.password }}
+			{% for error in form.password.errors %}
+				<p class="form-error">{{ error }}</p>
+			{% endfor %}
+
+			{% if test_user and test_password is defined %}
+				<div style="background: yellow; padding: 1em; display: inline-block">
+					<p>For testing purposes please use the following credentials</p>
+					<hr>
+					<p>User: <strong>{{ test_user }}</strong></p>
+					<p>Password: <strong>{{ test_password }}</strong></p>
+				</div>
+			{% endif %}
+
+			<input type="submit" value="Log In" class="clearfix">
+
 		</form>
 	{% endblock %}

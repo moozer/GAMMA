@@ -5,8 +5,18 @@
 	<head>
 		{% block head %}
 		<meta charset="utf-8">
-		<title>Gamma {% block title %}{% endblock %}</title>
-		<meta name="description" content="Great Attendance Monitoring and Measuring of Activity system">
+		<title>Gamma - {{ title }}</title>
+		<meta name="description" content="{{ description }}">
+
+		<!-- Favicon -->
+		<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon/favicon-16x16.png') }}" sizes="16x16">
+		<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}" sizes="32x32">
+
+		<!-- Mobile Device Views -->
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="theme-color" content="#006E79">
+		<meta name="msapplication-navbutton-color" content="#006E79">
+		<meta name="apple-mobile-web-app-status-bar-style" content="#006E79">
 
 		<!-- Stylesheets -->
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
@@ -26,12 +36,12 @@
 			{% block header %}
 			<div class="pagewidth">
 				<div class="logo">
-					<h1 id="site-title"><a href="/" title="Home">GAMMA</a></h1>
+					<h1 id="site-title"><a href="{{ url_for('index') }}" title="Home">GAMMA</a></h1>
 					<h2 id="site-description">Great Attendance Monitoring and Measuring of Activity system</h2>
 				</div>
 				<div class="metanav">
 					{% if not session.logged_in %}
-					<a class="login" href="{{ url_for('login') }}">Log In</a>
+					{% if request.path!="/login/" %}<a class="login" href="{{ url_for('login') }}">Log In</a>{% endif %}
 					{% else %}
 						<!-- User Menu -->
 						{% include "includes/user_menu.html" %}

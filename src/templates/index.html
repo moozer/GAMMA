@@ -1,19 +1,18 @@
 {% extends "base_layout.html" %}
 
 	{% block main %}
-	This is the index page...
-
+	<h1 class="page-title">{{ title }}</h1>
 	<h3>Points</h3>
 	<ul>
 		<li><a href="points">See scoreboard</a></li>
 		{% if session.logged_in %}
 		<li><a href="points/{{session.userid}}">Your points</a></li>
 		{% endif %}
-		<li><a href="sessions">sessions list</a></li>
+		<li><a href="lessons">Lessions list</a></li>
 		<li>list of student to come here</li>
 	</ul>
 
 	<h3>Learning goals</h3>
 	stuff to come here
-	<embed class="graph" type="image/svg+xml" src="{{graph_data|safe}}"/>
+
 	{% endblock %}
