@@ -1,0 +1,87 @@
+{% extends "base_layout.html" %}
+
+	{% block main %}
+	<h1 class="page-title">{{ title }}</h1>
+	<h3>Detailed points list for {{ studname }}</h3>
+
+	<h4>Attendance</h4>
+
+	<table class="grid3">
+		<thead>
+			<tr>
+				<th>Lesson</th>
+				<th>Date</th>
+				<th>More</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for att in lessons %}
+			<tr>
+				<td>{{att.lessons.name}}</td>
+				<td>{{att.lessons.date}}</td>
+				<td><a href="/lessons/{{att.lessons.date}}">details</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<h4>Absence w/o cause</h4>
+	<table class="grid3">
+		<thead>
+			<tr>
+				<th>Lesson</th>
+				<th>Date</th>
+				<th>More</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for abs in lessons %}
+			<tr>
+				<td>{{abs.lessons.name}}</td>
+				<td>{{abs.lessons.date}}</td>
+				<td><a href="/lessons/{{abs.lessons.date}}">details</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<h4>Hand-ins</h4>
+	<table class="grid3">
+		<thead>
+			<tr>
+				<th>Lesson</th>
+				<th>Date</th>
+				<th>More</th>
+			</tr>
+		</thead>
+			<tbody>
+			{% for hi in lessons %}
+			<tr>
+				<td>{{hi.lessons.name}}</td>
+				<td>{{hi.lessons.date}}</td>
+				<td><a href="/lessons/{{hi.lessons.date}}">details</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<h4>Extra Points</h4>
+	<table class="grid3">
+		<thead>
+			<tr>
+				<th>Reason</th>
+				<th>Date</th>
+				<th>Points</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for ext in extra_points_list %}
+			<tr>
+				<td>{{ext.reason}}</td>
+				<td>{{ext.date}}</td>
+				<td>{{ext.points}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endblock %}

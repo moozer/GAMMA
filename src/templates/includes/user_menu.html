@@ -1,0 +1,9 @@
+<div class="user-menu">
+	<div class="menu">{{session.userid}} <span class="icon-user-circle"></span>
+		<ul>
+			<li><a href="{{ url_for('points') + session.userid }}">Your points</a></li>
+			<li><a href="{{ url_for('logout') }}">Log Out</a></li>
+		</ul>
+	</div>
+
+</div>
