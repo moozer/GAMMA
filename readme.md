@@ -1,4 +1,4 @@
-
+I consider this project obsolete, therefore it has been archived.
 
 usage
 -------
